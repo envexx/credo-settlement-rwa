@@ -1,18 +1,31 @@
-# Credo
+<p align="center">
+  <img src="public/brands/LOGO.png" alt="Credo" width="72" />
+</p>
 
-**Proof-triggered RWA settlement for Creditcoin.**
+<h1 align="center">Credo</h1>
 
-Official USDC stays final on Ethereum. The ERC-1155 stays on Creditcoin. Only a cryptographic proof crosses chains — and the contract, not the backend, decides.
+<p align="center">
+  <strong>Proof-triggered RWA settlement for Creditcoin.</strong><br/>
+  Official USDC stays final on Ethereum. The ERC-1155 stays on Creditcoin.<br/>
+  Only a cryptographic proof crosses chains — and the contract, not the backend, decides.
+</p>
+
+<p align="center">
+  <a href="https://credo-settlement-rwa.vercel.app"><img src="https://shieldcn.dev/website/credo-settlement-rwa.vercel.app.svg?variant=ghost&size=xs" alt="live app" /></a>
+  <a href="https://github.com/envexx/credo-settlement-rwa/stargazers"><img src="https://shieldcn.dev/github/stars/envexx/credo-settlement-rwa.svg?variant=ghost&size=xs" alt="stars" /></a>
+  <a href="https://github.com/envexx/credo-settlement-rwa/blob/main/LICENSE"><img src="https://shieldcn.dev/github/license/envexx/credo-settlement-rwa.svg?variant=ghost&size=xs" alt="license" /></a>
+  <a href="https://github.com/envexx/credo-settlement-rwa/commits/main"><img src="https://shieldcn.dev/github/last-commit/envexx/credo-settlement-rwa.svg?variant=ghost&size=xs" alt="last commit" /></a>
+</p>
+
+---
+
+## Why Credo
 
 ```text
 Buyer pays USDC on Sepolia  →  Attestcoin proves the payment  →  escrow releases the RWA on Creditcoin
 ```
 
-Credo is a delivery-versus-payment **settlement layer**: any application — a marketplace, an OTC desk, an issuance platform — can escrow an ERC-1155 RWA on Creditcoin and release it against a verified USDC payment on Ethereum Sepolia, with no bridge, no wrapped asset, and no trusted intermediary.
-
----
-
-## Why this is different
+Credo is a delivery-versus-payment **settlement layer**: any application — a marketplace, an OTC desk, an issuance platform — can escrow an ERC-1155 RWA on Creditcoin and release it against a verified USDC payment on Ethereum Sepolia. No bridge, no wrapped asset, no trusted intermediary.
 
 | Conventional cross-chain RWA | Credo |
 |---|---|
@@ -57,7 +70,7 @@ Credo's core scoring claim: the Attestcoin Protocol is not an add-on, it is the 
 
 ## Live testnet proof (v3 deployment)
 
-Verified directly against CC3 RPC — not claimed, linked:
+Verified directly against CC3 RPC — not claimed, linked.
 
 | Contract | Address |
 |---|---|
@@ -110,7 +123,7 @@ npm run db:migrate
 npm run worker           # long-running proof worker — never a serverless function
 ```
 
-The full API contract, parameter reference, ABI downloads, and security model are documented in the in-app developer docs (`/infra`) and served by the app itself.
+The full API contract, parameter reference, ABI downloads, and security model are documented in the in-app developer docs ([`/infra`](https://credo-settlement-rwa.vercel.app/infra)) and served by the app itself.
 
 ## Deployment sequence
 
@@ -129,4 +142,6 @@ The full API contract, parameter reference, ABI downloads, and security model ar
 
 ---
 
-Built for **BUIDL CTC 2026 Fall — RWA Track** on Creditcoin CC3 Testnet, powered by the Attestcoin Protocol (USC v2).
+<p align="center">
+  <sub>Built for <strong>BUIDL CTC 2026 Fall — RWA Track</strong> · Creditcoin CC3 Testnet · Powered by the Attestcoin Protocol (USC v2)</sub>
+</p>
