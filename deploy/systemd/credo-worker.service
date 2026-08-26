@@ -1,0 +1,15 @@
+[Unit]
+Description=Credo proof worker (drain due jobs and exit)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=credo
+WorkingDirectory=/opt/credo
+ExecStart=/usr/bin/npm run worker
+TimeoutStartSec=infinity
+
+# Prevent overlapping proof builders. A later timer run starts after this one exits.
+[Install]
+WantedBy=multi-user.target

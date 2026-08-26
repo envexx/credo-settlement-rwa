@@ -119,7 +119,7 @@ contracts/test/         Foundry suite (7 tests incl. 256-run fuzz invariants)
 contracts/deployments/  Canonical deployment manifest (CC3 testnet)
 src/app/api/v1/         Auth (SIWE-style) · sales prepare/index · payment · settlement status
 src/lib/                Domain logic, strict Zod schemas, money math, security guards
-worker/                 Persistent proof worker: validate → wait attestation → prove → submit → reconcile
+worker/                 On-demand proof worker: validate → wait attestation → prove → submit → exit
 db/                     PostgreSQL schema: sales index, payment attempts, proof jobs, audit log
 docs/evidence/          On-chain evidence artifacts (before/after balances, tx records)
 docs/submission/        Pitch deck, demo video, and YouTube metadata
@@ -142,8 +142,26 @@ Database + worker (worker requires `DATABASE_URL`; see `.env.example`):
 ```bash
 cp .env.example .env.local
 npm run db:migrate
-npm run worker           # long-running proof worker — never a serverless function
+npm run worker           # drain every due proof job, then exit when the queue is idle
 ```
+
+For a small VPS, install the supplied systemd one-shot service and timer instead
+of keeping a Node.js process alive. The database remains the durable queue. The
+timer checks once per minute, systemd prevents overlapping runs, and no Node.js
+worker remains in memory between runs:
+
+```bash
+sudo cp deploy/systemd/credo-worker.{service,timer} /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now credo-worker.timer
+```
+
+When a payment job exists, that invocation stays alive while it waits for the
+Attestcoin proof, submits settlement, drains any other due jobs, and exits. When
+there is no job, it connects, confirms the queue is idle, and exits immediately.
+The timer-based hackathon setup trades up to roughly one minute of trigger
+latency for near-zero idle memory usage. Update `User` and `WorkingDirectory` in
+the service file to match the VPS before installing it.
 
 The full API contract, parameter reference, ABI downloads, and security model are documented in the in-app developer docs ([`/infra`](https://credo.becoder.xyz/infra)) and served by the app itself.
 

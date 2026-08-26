@@ -1,0 +1,12 @@
+[Unit]
+Description=Wake the Credo proof worker when jobs may be due
+
+[Timer]
+OnBootSec=15s
+OnUnitInactiveSec=60s
+AccuracySec=5s
+Persistent=true
+Unit=credo-worker.service
+
+[Install]
+WantedBy=timers.target

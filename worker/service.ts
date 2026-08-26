@@ -2,6 +2,7 @@ import postgres from "postgres";
 import type { IndexedSale } from "../src/lib/store";
 import { isRetryable, retryDelay } from "./core";
 import { processLivePayment } from "./live";
+import { drainAndExit } from "./drain";
 import {
   recoverableIntermediateStatuses,
   staleJobMilliseconds,
@@ -31,7 +32,7 @@ async function claimJob() {
 
 async function tick() {
   const job = await claimJob();
-  if (!job) return;
+  if (!job) return false;
   const rows =
     await sql`SELECT * FROM sales_index WHERE sale_id=${job.sale_id}`;
   const row = rows[0];
@@ -75,12 +76,30 @@ async function tick() {
   } finally {
     clearInterval(heartbeat);
   }
+  return true;
 }
 
-console.log(
-  JSON.stringify({ level: "info", service: "proof-worker", stage: "STARTED" }),
-);
-for (;;) {
-  await tick();
-  await new Promise((resolve) => setTimeout(resolve, 15_000));
+async function main() {
+  console.log(
+    JSON.stringify({
+      level: "info",
+      service: "proof-worker",
+      stage: "STARTED",
+      mode: "drain-and-exit",
+    }),
+  );
+  const processed = await drainAndExit(tick, () => sql.end());
+  console.log(
+    JSON.stringify({
+      level: "info",
+      service: "proof-worker",
+      stage: "IDLE_EXIT",
+      processed,
+    }),
+  );
 }
+
+void main().catch((error: unknown) => {
+  console.error(error);
+  process.exitCode = 1;
+});
