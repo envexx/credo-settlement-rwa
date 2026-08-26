@@ -109,7 +109,7 @@ A complete settlement with **two independent wallets** (distinct seller and buye
 | Settlement on Creditcoin | [`0xcf9dd953…56eff96`](https://creditcoin-testnet.blockscout.com/tx/0xcf9dd953498e5378d4f815b997a6a1a44e8c03ee6a3ebf23f1c4b3c2956eff96) |
 | Result | buyer ERC-1155 balance `1`, escrow `0`, replay marker `true` |
 
-Raw artifacts live in [`docs/evidence/`](docs/evidence) and the full audit trail in [`docs/TDD-AUDIT.md`](docs/TDD-AUDIT.md).
+Raw artifacts live in [`docs/evidence/`](docs/evidence) — before/after balances, the Attestcoin proof run, and settlement records.
 
 ## 🧱 Repository layout
 
@@ -122,7 +122,7 @@ src/lib/                Domain logic, strict Zod schemas, money math, security g
 worker/                 Persistent proof worker: validate → wait attestation → prove → submit → reconcile
 db/                     PostgreSQL schema: sales index, payment attempts, proof jobs, audit log
 docs/evidence/          On-chain evidence artifacts (before/after balances, tx records)
-docs/INFRA-WORKPLAN.md  Builder-facing integration packaging plan
+docs/submission/        Pitch deck, demo video, and YouTube metadata
 ```
 
 ## 💻 Local development

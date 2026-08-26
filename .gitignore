@@ -14,3 +14,25 @@ cache/
 contracts/lib/
 
 .vercel
+
+# Submission working files
+*.m4v
+*.pptx.inspect*
+tmp/
+
+# Superseded generated assets
+docs/submission/credo-deck-professional/
+
+# Internal working files — not for the public repo
+AGENTS.md
+CLAUDE.md
+INFRA.MD
+SettleRWA*.md
+dogfood-output/
+docs/TDD-AUDIT.md
+docs/UI-UX-BLUEPRINT.md
+docs/INFRA-WORKPLAN.md
+docs/superpowers/
+scripts/make-deck.py
+scripts/vercel-env-push.py
+dogfood-output/
