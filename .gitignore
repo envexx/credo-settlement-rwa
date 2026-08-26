@@ -1,0 +1,14 @@
+node_modules/
+.next/
+.vercel/
+*.log
+.env*
+!.env.example
+*.tsbuildinfo
+contracts/out/
+contracts/cache/
+contracts/build/
+docs/submission/_*
+.DS_Store
+cache/
+contracts/lib/

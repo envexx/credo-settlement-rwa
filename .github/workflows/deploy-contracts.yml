@@ -1,0 +1,20 @@
+name: Deploy CC3 Contracts
+on: { workflow_dispatch: {} }
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: cc3-testnet
+    steps:
+      - uses: actions/checkout@v4
+        with: { submodules: recursive }
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - uses: foundry-rs/foundry-toolchain@v1
+        with: { version: v1.2.3 }
+      - run: forge build
+      - run: npm run contracts:deploy
+        env:
+          CREDITCOIN_RPC_URL: ${{ secrets.CREDITCOIN_RPC_URL }}
+          CREDITCOIN_WORKER_PRIVATE_KEY: ${{ secrets.DEPLOYER_PRIVATE_KEY }}
+          SESSION_SECRET: ${{ secrets.SESSION_SECRET }}

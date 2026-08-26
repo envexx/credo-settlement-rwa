@@ -1,0 +1,21 @@
+{
+  "sale": {
+    "saleId": "0x8d4c39b6bc44f36e8c2456c3c47f6d04c907475f37e05c16fd2655b9bb3b6c1d",
+    "seller": "0x5bF729412bB61f8cF92f927665397aB7eFbF7802",
+    "buyer": "0x09549e3a38380a4ceB461D011542d0e43eC633eD",
+    "assetContract": "0xEe1e1D277d011157dAC95F59189E9d5877668284",
+    "tokenId": "1001",
+    "assetAmount": "1",
+    "paymentChainKey": 1,
+    "paymentChainId": 11155111,
+    "paymentToken": "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238",
+    "paymentRecipient": "0x5bF729412bB61f8cF92f927665397aB7eFbF7802",
+    "paymentAmount": "5000000",
+    "sourceStartBlock": "11566169",
+    "sourceEndBlock": "11573369",
+    "status": "OPEN"
+  },
+  "sourceTxHash": "0xfd25089e189c53a5a39fc81eb0054e1069f66e3a761ddedeb64cd64df2383010",
+  "creationTxHash": "0xa04c400db1df80e263563aeb9498734019facf06393c39b9997b434d601217c8",
+  "sourceBlock": "11566178"
+}

@@ -1,0 +1,8 @@
+{
+  "network": "creditcoin-cc3-testnet",
+  "owner": "0x5bF729412bB61f8cF92f927665397aB7eFbF7802",
+  "tokenId": "1001",
+  "sellerBalance": "1",
+  "buyerBalance": "0",
+  "verifiedOnchain": true
+}

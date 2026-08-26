@@ -1,0 +1,9 @@
+{
+  "name": "Demo Treasury Note 2026-A",
+  "assetId": "DTR-2026-001",
+  "type": "TOKENIZED_TREASURY_DEMO",
+  "faceValue": "5000 USD",
+  "network": "Creditcoin CC3 Testnet",
+  "testnet": true,
+  "economicValue": false
+}

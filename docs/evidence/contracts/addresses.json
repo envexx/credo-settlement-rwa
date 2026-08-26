@@ -1,0 +1,15 @@
+{
+  "network": "creditcoin-cc3-testnet",
+  "chainId": 102031,
+  "contracts": {
+    "EvmV1Decoder": "0xd2705324FD6D54e33789768a636039811B47BA3f",
+    "TestRWA": "0xEe1e1D277d011157dAC95F59189E9d5877668284",
+    "SettleRWA": "0x643e070304b7ae9Eed815A7976AA83217206b64a",
+    "PaymentVerifierUSC": "0x89df0af9C61D9636d1f67748D863f9AfC741EcfF"
+  },
+  "source": {
+    "chainKey": 1,
+    "chainId": 11155111,
+    "usdc": "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238"
+  }
+}
