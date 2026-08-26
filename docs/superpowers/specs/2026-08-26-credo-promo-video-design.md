@@ -8,7 +8,7 @@ The video is intended for hackathon judges, project presentations, YouTube, and 
 
 ## Deliverables
 
-- A HyperFrames project under `videos/credo-proof-becomes-ownership/`.
+- A HyperFrames project under `Video/credo-proof-becomes-ownership/`.
 - A 1920×1080, 30 fps composition with a target duration of exactly 75 seconds.
 - A rendered promotional MP4 containing a clearly replaceable demo placeholder from 00:20 through 00:55.
 - A complete English voice-over script with timecodes and delivery notes.

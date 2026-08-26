@@ -4,7 +4,7 @@
 
 **Goal:** Build and verify a 75-second 1920×1080 HyperFrames promotional video for Credo with a replaceable 35-second Playground demo slot, complete English VO script, demo recording guide, overlay, and rendered MP4.
 
-**Architecture:** The video lives in an isolated HyperFrames project at `videos/credo-proof-becomes-ownership/`. A durable brief drives capture and design tokens; the storyboard and locked script define exact narrative timing; independent frame compositions are assembled into one index, with the demo placeholder and overlay kept separate so user footage can be swapped without rebuilding the intro or close.
+**Architecture:** The video lives in an isolated HyperFrames project at `Video/credo-proof-becomes-ownership/`. A durable brief drives capture and design tokens; the storyboard and locked script define exact narrative timing; independent frame compositions are assembled into one index, with the demo placeholder and overlay kept separate so user footage can be swapped without rebuilding the intro or close.
 
 **Tech Stack:** HyperFrames 0.8.15+, HTML/CSS/JavaScript compositions, GSAP/seek-safe HyperFrames animation runtime, Markdown storyboard/script artifacts, HeyGen media catalog when authenticated, local project assets, Chromium-based snapshot/render pipeline.
 
@@ -12,35 +12,35 @@
 
 ## File Map
 
-- `videos/credo-proof-becomes-ownership/BRIEF.md` — confirmed purpose, audience, runtime, concept, and constraints.
-- `videos/credo-proof-becomes-ownership/hyperframes.json` — project and render configuration.
-- `videos/credo-proof-becomes-ownership/capture/` — captured Credo pages, tokens, and asset inventory.
-- `videos/credo-proof-becomes-ownership/frame.md` — immutable visual-system source for every frame.
-- `videos/credo-proof-becomes-ownership/STORYBOARD.md` — frame order, durations, transitions, assets, and time-coded visual direction.
-- `videos/credo-proof-becomes-ownership/SCRIPT.md` — locked English narration with pronunciation and delivery guidance.
-- `videos/credo-proof-becomes-ownership/DEMO-RECORDING-GUIDE.md` — user-facing capture and replacement instructions.
-- `videos/credo-proof-becomes-ownership/compositions/frames/*.html` — one bounded visual composition per narrative frame.
-- `videos/credo-proof-becomes-ownership/compositions/demo-overlay.html` — transparent overlay for the user's Playground footage.
-- `videos/credo-proof-becomes-ownership/index.html` — assembled 75-second master composition.
-- `videos/credo-proof-becomes-ownership/renders/credo-promo-75s.mp4` — rendered master with placeholder.
-- `videos/credo-proof-becomes-ownership/renders/demo-overlay.webm` — overlay with alpha when supported, otherwise chroma-safe fallback.
-- `videos/credo-proof-becomes-ownership/snapshots/contact-sheet.jpg` — visual verification evidence.
+- `Video/credo-proof-becomes-ownership/BRIEF.md` — confirmed purpose, audience, runtime, concept, and constraints.
+- `Video/credo-proof-becomes-ownership/hyperframes.json` — project and render configuration.
+- `Video/credo-proof-becomes-ownership/capture/` — captured Credo pages, tokens, and asset inventory.
+- `Video/credo-proof-becomes-ownership/frame.md` — immutable visual-system source for every frame.
+- `Video/credo-proof-becomes-ownership/STORYBOARD.md` — frame order, durations, transitions, assets, and time-coded visual direction.
+- `Video/credo-proof-becomes-ownership/SCRIPT.md` — locked English narration with pronunciation and delivery guidance.
+- `Video/credo-proof-becomes-ownership/DEMO-RECORDING-GUIDE.md` — user-facing capture and replacement instructions.
+- `Video/credo-proof-becomes-ownership/compositions/frames/*.html` — one bounded visual composition per narrative frame.
+- `Video/credo-proof-becomes-ownership/compositions/demo-overlay.html` — transparent overlay for the user's Playground footage.
+- `Video/credo-proof-becomes-ownership/index.html` — assembled 75-second master composition.
+- `Video/credo-proof-becomes-ownership/renders/credo-promo-75s.mp4` — rendered master with placeholder.
+- `Video/credo-proof-becomes-ownership/renders/demo-overlay.webm` — overlay with alpha when supported, otherwise chroma-safe fallback.
+- `Video/credo-proof-becomes-ownership/snapshots/contact-sheet.jpg` — visual verification evidence.
 
 ### Task 1: Initialize and Lock the Brief
 
 **Files:**
-- Create: `videos/credo-proof-becomes-ownership/hyperframes.json`
-- Create: `videos/credo-proof-becomes-ownership/BRIEF.md`
+- Create: `Video/credo-proof-becomes-ownership/hyperframes.json`
+- Create: `Video/credo-proof-becomes-ownership/BRIEF.md`
 
 - [ ] **Step 1: Initialize the video project**
 
 Run from the repository root:
 
 ```powershell
-npx hyperframes init "videos/credo-proof-becomes-ownership" --non-interactive --example=blank --skill=product-launch-video
+npx hyperframes init "Video/credo-proof-becomes-ownership" --non-interactive --example=blank --skill=product-launch-video
 ```
 
-Expected: exit code `0` and `videos/credo-proof-becomes-ownership/hyperframes.json` exists.
+Expected: exit code `0` and `Video/credo-proof-becomes-ownership/hyperframes.json` exists.
 
 - [ ] **Step 2: Write the confirmed brief**
 
@@ -95,7 +95,7 @@ node "C:\Users\HP\.agents\skills\media-use\scripts\prefs.mjs" record --hyperfram
 node "C:\Users\HP\.agents\skills\media-use\scripts\prefs.mjs" record --hyperframes . --key storyboard --value no
 ```
 
-Working directory: `videos/credo-proof-becomes-ownership`.
+Working directory: `Video/credo-proof-becomes-ownership`.
 
 Expected: every command records one value without rejecting the key.
 
@@ -110,16 +110,16 @@ Expected: signed-in provider details or the documented signed-out/offline guidan
 - [ ] **Step 5: Commit setup artifacts**
 
 ```powershell
-git add videos/credo-proof-becomes-ownership/hyperframes.json videos/credo-proof-becomes-ownership/BRIEF.md
+git add Video/credo-proof-becomes-ownership/hyperframes.json Video/credo-proof-becomes-ownership/BRIEF.md
 git commit -m "feat(video): initialize Credo promo brief"
 ```
 
 ### Task 2: Capture Brand and Product Evidence
 
 **Files:**
-- Create: `videos/credo-proof-becomes-ownership/capture/**`
-- Create: `videos/credo-proof-becomes-ownership/capture/extracted/tokens.json`
-- Create: `videos/credo-proof-becomes-ownership/capture/extracted/asset-descriptions.md`
+- Create: `Video/credo-proof-becomes-ownership/capture/**`
+- Create: `Video/credo-proof-becomes-ownership/capture/extracted/tokens.json`
+- Create: `Video/credo-proof-becomes-ownership/capture/extracted/asset-descriptions.md`
 
 - [ ] **Step 1: Capture the live landing page**
 
@@ -127,7 +127,7 @@ git commit -m "feat(video): initialize Credo promo brief"
 npx hyperframes capture "https://credo.becoder.xyz" -o ./capture --json
 ```
 
-Working directory: `videos/credo-proof-becomes-ownership`.
+Working directory: `Video/credo-proof-becomes-ownership`.
 
 Expected: JSON reports `ok: true`, no `capture/BLOCKED.md`, and required extracted files exist.
 
@@ -154,15 +154,15 @@ Expected: existing project media is inventoried without replacing source assets.
 - [ ] **Step 4: Commit capture metadata and usable source assets**
 
 ```powershell
-git add videos/credo-proof-becomes-ownership/capture videos/credo-proof-becomes-ownership/.media
+git add Video/credo-proof-becomes-ownership/capture Video/credo-proof-becomes-ownership/.media
 git commit -m "feat(video): capture Credo brand and product evidence"
 ```
 
 ### Task 3: Build the Visual System
 
 **Files:**
-- Create: `videos/credo-proof-becomes-ownership/frame.md`
-- Create: `videos/credo-proof-becomes-ownership/.hyperframes/caption-skin.html`
+- Create: `Video/credo-proof-becomes-ownership/frame.md`
+- Create: `Video/credo-proof-becomes-ownership/.hyperframes/caption-skin.html`
 
 - [ ] **Step 1: Select the closest editorial-technical shipped preset**
 
@@ -187,16 +187,16 @@ Expected: the workflow-scoped preference is accepted.
 - [ ] **Step 4: Commit the visual system**
 
 ```powershell
-git add videos/credo-proof-becomes-ownership/frame.md videos/credo-proof-becomes-ownership/.hyperframes/caption-skin.html
+git add Video/credo-proof-becomes-ownership/frame.md Video/credo-proof-becomes-ownership/.hyperframes/caption-skin.html
 git commit -m "feat(video): establish Credo launch visual system"
 ```
 
 ### Task 4: Author the Storyboard, VO Script, and Demo Guide
 
 **Files:**
-- Create: `videos/credo-proof-becomes-ownership/STORYBOARD.md`
-- Create: `videos/credo-proof-becomes-ownership/SCRIPT.md`
-- Create: `videos/credo-proof-becomes-ownership/DEMO-RECORDING-GUIDE.md`
+- Create: `Video/credo-proof-becomes-ownership/STORYBOARD.md`
+- Create: `Video/credo-proof-becomes-ownership/SCRIPT.md`
+- Create: `Video/credo-proof-becomes-ownership/DEMO-RECORDING-GUIDE.md`
 
 - [ ] **Step 1: Write the exact seven-frame timing map**
 
@@ -266,15 +266,15 @@ Expected: any prohibited term appears only in explicit negation; timing and accu
 - [ ] **Step 5: Commit narrative artifacts**
 
 ```powershell
-git add videos/credo-proof-becomes-ownership/STORYBOARD.md videos/credo-proof-becomes-ownership/SCRIPT.md videos/credo-proof-becomes-ownership/DEMO-RECORDING-GUIDE.md
+git add Video/credo-proof-becomes-ownership/STORYBOARD.md Video/credo-proof-becomes-ownership/SCRIPT.md Video/credo-proof-becomes-ownership/DEMO-RECORDING-GUIDE.md
 git commit -m "feat(video): add Credo storyboard voiceover and demo guide"
 ```
 
 ### Task 5: Enrich Visual Direction and Stage Assets
 
 **Files:**
-- Modify: `videos/credo-proof-becomes-ownership/STORYBOARD.md`
-- Create: `videos/credo-proof-becomes-ownership/assets/**`
+- Modify: `Video/credo-proof-becomes-ownership/STORYBOARD.md`
+- Create: `Video/credo-proof-becomes-ownership/assets/**`
 
 - [ ] **Step 1: Add a time-coded shot sequence to every frame**
 
@@ -295,21 +295,21 @@ Expected: every storyboard asset candidate used by a frame is copied into `asset
 - [ ] **Step 4: Commit the enriched production board**
 
 ```powershell
-git add videos/credo-proof-becomes-ownership/STORYBOARD.md videos/credo-proof-becomes-ownership/assets
+git add Video/credo-proof-becomes-ownership/STORYBOARD.md Video/credo-proof-becomes-ownership/assets
 git commit -m "feat(video): define Credo frame motion and stage assets"
 ```
 
 ### Task 6: Build Frame Compositions
 
 **Files:**
-- Create: `videos/credo-proof-becomes-ownership/compositions/frames/01-hook.html`
-- Create: `videos/credo-proof-becomes-ownership/compositions/frames/02-rejection.html`
-- Create: `videos/credo-proof-becomes-ownership/compositions/frames/03-mechanism.html`
-- Create: `videos/credo-proof-becomes-ownership/compositions/frames/04-demo-placeholder.html`
-- Create: `videos/credo-proof-becomes-ownership/compositions/frames/05-exact-match.html`
-- Create: `videos/credo-proof-becomes-ownership/compositions/frames/06-evidence.html`
-- Create: `videos/credo-proof-becomes-ownership/compositions/frames/07-close.html`
-- Create: `videos/credo-proof-becomes-ownership/compositions/demo-overlay.html`
+- Create: `Video/credo-proof-becomes-ownership/compositions/frames/01-hook.html`
+- Create: `Video/credo-proof-becomes-ownership/compositions/frames/02-rejection.html`
+- Create: `Video/credo-proof-becomes-ownership/compositions/frames/03-mechanism.html`
+- Create: `Video/credo-proof-becomes-ownership/compositions/frames/04-demo-placeholder.html`
+- Create: `Video/credo-proof-becomes-ownership/compositions/frames/05-exact-match.html`
+- Create: `Video/credo-proof-becomes-ownership/compositions/frames/06-evidence.html`
+- Create: `Video/credo-proof-becomes-ownership/compositions/frames/07-close.html`
+- Create: `Video/credo-proof-becomes-ownership/compositions/demo-overlay.html`
 
 - [ ] **Step 1: Generate bounded frame packets**
 
@@ -334,16 +334,16 @@ Update each frame's metadata from `status: outline` to `status: animated` only a
 - [ ] **Step 5: Commit frame sources**
 
 ```powershell
-git add videos/credo-proof-becomes-ownership/compositions videos/credo-proof-becomes-ownership/STORYBOARD.md
+git add Video/credo-proof-becomes-ownership/compositions Video/credo-proof-becomes-ownership/STORYBOARD.md
 git commit -m "feat(video): build Credo promotional frames"
 ```
 
 ### Task 7: Assemble and Verify the Master
 
 **Files:**
-- Create: `videos/credo-proof-becomes-ownership/index.html`
-- Create: `videos/credo-proof-becomes-ownership/caption_groups.json` when captions are enabled
-- Create: `videos/credo-proof-becomes-ownership/snapshots/contact-sheet.jpg`
+- Create: `Video/credo-proof-becomes-ownership/index.html`
+- Create: `Video/credo-proof-becomes-ownership/caption_groups.json` when captions are enabled
+- Create: `Video/credo-proof-becomes-ownership/snapshots/contact-sheet.jpg`
 
 - [ ] **Step 1: Build captions from the locked narration without embedding final VO**
 
@@ -386,15 +386,15 @@ Expected: `snapshots/contact-sheet.jpg` exists. Inspect it for clipping, unreada
 - [ ] **Step 6: Commit the verified assembly**
 
 ```powershell
-git add videos/credo-proof-becomes-ownership/index.html videos/credo-proof-becomes-ownership/caption_groups.json videos/credo-proof-becomes-ownership/snapshots/contact-sheet.jpg
+git add Video/credo-proof-becomes-ownership/index.html Video/credo-proof-becomes-ownership/caption_groups.json Video/credo-proof-becomes-ownership/snapshots/contact-sheet.jpg
 git commit -m "feat(video): assemble and verify Credo promo"
 ```
 
 ### Task 8: Preview and Render Deliverables
 
 **Files:**
-- Create: `videos/credo-proof-becomes-ownership/renders/credo-promo-75s.mp4`
-- Create: `videos/credo-proof-becomes-ownership/renders/demo-overlay.webm`
+- Create: `Video/credo-proof-becomes-ownership/renders/credo-promo-75s.mp4`
+- Create: `Video/credo-proof-becomes-ownership/renders/demo-overlay.webm`
 
 - [ ] **Step 1: Open the verified preview**
 
