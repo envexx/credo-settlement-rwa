@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/envexx/credo-settlement-rwa/main/public/brands/credo-horizon.png" alt="Credo — proof-triggered RWA settlement" width="100%" style="border-radius: 16px" />
+<img src="https://raw.githubusercontent.com/envexx/credo-settlement-rwa/main/public/brands/LOGO.png" alt="Credo logo" width="88" style="border-radius: 20px" />
 
 # CREDO
 
