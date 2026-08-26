@@ -1322,18 +1322,22 @@ body::before {
 .site-footer-grid > div {
   display: flex;
   flex-direction: column;
-  gap: 11px;
-  font-size: 10px;
+  gap: 12px;
+  font-size: 12px;
+  line-height: 1.6;
 }
 .site-footer-grid > div:first-child p {
-  max-width: 270px;
+  max-width: 300px;
   margin-top: 12px;
   line-height: 1.7;
 }
 .site-footer-grid strong {
   margin-bottom: 8px;
   color: #e5e9e3;
-  font-size: 11px;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.75;
 }
 .site-footer-grid a:hover {
   color: var(--primary);
@@ -1351,19 +1355,18 @@ body::before {
   width: 30px;
   height: 30px;
   place-items: center;
+  border: 1px solid oklch(1 0 0 / 0.12);
   border-radius: 8px;
-  background: var(--primary);
-  color: #152006;
-}
-.site-footer-brand svg {
-  width: 14px;
+  overflow: hidden;
 }
 .site-footer-bottom {
   display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
   justify-content: space-between;
-  padding-block: 22px;
+  padding-block: 24px;
   border-top: 1px solid oklch(1 0 0 / 0.08);
-  font-size: 9px;
+  font-size: 11px;
 }
 @media (max-width: 900px) {
   .credo-network-grid,

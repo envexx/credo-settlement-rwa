@@ -137,7 +137,7 @@ export function SiteHeader() {
 
 export function SiteFooter() {
   return (
-    <footer className="site-footer border-t">
+    <footer className="site-footer">
       <div className="container-shell site-footer-grid">
         <div>
           <Link href="/" className="site-footer-brand">
@@ -145,16 +145,17 @@ export function SiteFooter() {
               <NextImage
                 src={logo}
                 alt="Credo logo"
-                width={28}
-                height={28}
+                width={30}
+                height={30}
                 className="size-full object-cover"
               />
             </span>
             CREDO.
           </Link>
           <p>
-            Proof-triggered delivery-versus-payment infrastructure for
-            real-world assets.
+            Proof-triggered delivery-versus-payment settlement for real-world
+            assets. Payment stays final on Ethereum, ownership settles on
+            Creditcoin — only the proof crosses.
           </p>
         </div>
         <div>
@@ -170,14 +171,32 @@ export function SiteFooter() {
           <Link href="/infra#abi">Contract ABI</Link>
         </div>
         <div>
-          <strong>Networks</strong>
-          <span>Ethereum Sepolia</span>
-          <span>Attestcoin</span>
-          <span>Creditcoin CC3</span>
+          <strong>On-chain</strong>
+          <a
+            href="https://creditcoin-testnet.blockscout.com/tx/0xcf9dd953498e5378d4f815b997a6a1a44e8c03ee6a3ebf23f1c4b3c2956eff96"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Live settlement ↗
+          </a>
+          <a
+            href="https://sepolia.etherscan.io/tx/0xfd25089e189c53a5a39fc81eb0054e1069f66e3a761ddedeb64cd64df2383010"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Payment proof ↗
+          </a>
+          <a
+            href="https://github.com/envexx/credo-settlement-rwa"
+            target="_blank"
+            rel="noreferrer"
+          >
+            GitHub ↗
+          </a>
         </div>
       </div>
       <div className="container-shell site-footer-bottom">
-        <p>Credo / CC3 Testnet</p>
+        <p>© 2026 Credo · CC3 Testnet · BUIDL CTC 2026 Fall</p>
         <p className="font-mono">
           NO BRIDGE · NO WRAPPED USDC · NO TRUSTED WORKER
         </p>
