@@ -19,27 +19,23 @@ test("product-facing copy does not call Credo a primitive", async () => {
   for (const content of copy) assert.doesNotMatch(content, /primitive/i);
 });
 
-test("playground presents a complete guided settlement simulation", async () => {
+test("playground presents a live testnet settlement flow", async () => {
   const [page, component] = await Promise.all([
     source("playground/page.tsx"),
     source("../components/playground.tsx"),
   ]);
   const content = `${page}\n${component}`;
 
-  assert.match(content, /Guided testnet simulation/);
-  assert.match(content, /Run without wallet/);
-  assert.match(content, /Event stream/);
-  assert.match(content, /Receipt checks/);
-  assert.match(content, /What the developer sends/);
-  assert.match(content, /What the protocol verifies/);
-  assert.match(content, /View real settlement/);
+  assert.match(content, /Live testnet settlement/);
+  assert.match(content, /Connect & reserve live RWA/);
+  assert.match(content, /Pay 1\.00 test USDC/);
+  assert.match(content, /Attestcoin/);
+  assert.doesNotMatch(content, /Guided testnet simulation/);
+  assert.doesNotMatch(content, /Run without wallet/);
 });
 
-test("playground simulation state is isolated per browser session", async () => {
-  const route = await source("api/demo/route.ts");
-
-  assert.match(route, /credo_demo_session/);
-  assert.match(route, /Map<string, DemoSession>/);
+test("the mock playground route is removed", async () => {
+  await assert.rejects(source("api/demo/route.ts"));
 });
 
 test("root layout declares its smooth scroll behavior to Next.js", async () => {

@@ -43,6 +43,10 @@ const schema = z.object({
     .string()
     .regex(/^0x[a-fA-F0-9]{64}$/)
     .optional(),
+  DEMO_SELLER_PRIVATE_KEY: z
+    .string()
+    .regex(/^0x[a-fA-F0-9]{64}$/)
+    .optional(),
   DEPLOYER_PRIVATE_KEY: z
     .string()
     .regex(/^0x[a-fA-F0-9]{64}$/)

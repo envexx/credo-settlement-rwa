@@ -145,6 +145,13 @@ npm run db:migrate
 npm run worker           # drain every due proof job, then exit when the queue is idle
 ```
 
+### Live playground
+
+Connect one EVM wallet, sign in, reserve one test RWA, and pay exactly 1.00
+Sepolia test USDC. Credo creates the CC3 escrow with a limited demo seller
+wallet; the buyer needs no tCTC and receives the ERC-1155 after Attestcoin
+verification. Settlement normally takes 8–10 minutes. This is testnet-only.
+
 For a small VPS, install the supplied systemd one-shot service and timer instead
 of keeping a Node.js process alive. The database remains the durable queue. The
 timer checks once per minute, systemd prevents overlapping runs, and no Node.js

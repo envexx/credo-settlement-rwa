@@ -172,6 +172,48 @@ export function dueJobs(now = Date.now()) {
 const sql = config.DATABASE_URL
   ? postgres(config.DATABASE_URL, { max: 2, idle_timeout: 20 })
   : undefined;
+
+export async function withDemoSellerLock<T>(operation: () => Promise<T>) {
+  if (!sql) return operation();
+  const connection = await sql.reserve();
+  try {
+    await connection`SELECT pg_advisory_lock(hashtext('credo-demo-seller'))`;
+    return await operation();
+  } finally {
+    await connection`SELECT pg_advisory_unlock(hashtext('credo-demo-seller'))`;
+    await connection.release();
+  }
+}
+
+export async function findOpenDemoSaleForBuyer(
+  demoSeller: string,
+  buyer: string,
+) {
+  if (!sql) return undefined;
+  const rows =
+    await sql`SELECT sale_id FROM sales_index WHERE seller=${demoSeller.toLowerCase()} AND buyer=${buyer.toLowerCase()} AND status='OPEN' LIMIT 1`;
+  return rows[0]?.sale_id as string | undefined;
+}
+
+export async function countOpenDemoSales(demoSeller: string) {
+  if (!sql) return 0;
+  const rows =
+    await sql`SELECT count(*)::int AS count FROM sales_index WHERE seller=${demoSeller.toLowerCase()} AND status='OPEN'`;
+  return Number(rows[0]?.count ?? 0);
+}
+
+export async function findOpenDemoSales(demoSeller: string) {
+  if (!sql) return [] as string[];
+  const rows =
+    await sql`SELECT sale_id FROM sales_index WHERE seller=${demoSeller.toLowerCase()} AND status='OPEN' ORDER BY created_at`;
+  return rows.map((row) => row.sale_id as string);
+}
+
+export async function markSaleReclaimed(saleId: string) {
+  if (!sql) return;
+  await sql`UPDATE sales_index SET status='RECLAIMED' WHERE sale_id=${saleId} AND status='OPEN'`;
+}
+
 export async function persistSale(sale: IndexedSale) {
   addSale(sale);
   if (!sql) return;

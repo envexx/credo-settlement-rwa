@@ -9,7 +9,7 @@
     "lint": "eslint --max-warnings=0 src worker db contracts/script",
     "format:check": "prettier --check src worker db contracts/script *.json *.ts",
     "start": "next start",
-    "test": "tsx src/lib/settlement.test.ts && tsx src/lib/store.test.ts && tsx src/lib/rpc.test.ts && tsx worker/core.test.ts && tsx worker/drain.test.ts && tsx src/app/infra/page.test.ts && tsx src/app/product-copy.test.ts",
+    "test": "tsx src/lib/store.test.ts && tsx src/lib/live-demo.test.ts && tsx src/lib/demo-lock.test.ts && tsx src/lib/rpc.test.ts && tsx worker/core.test.ts && tsx worker/drain.test.ts && tsx src/app/infra/page.test.ts && tsx src/app/product-copy.test.ts && tsx src/app/api/v1/playground/live-sale/route.test.ts",
     "worker": "tsx --env-file=.env.local worker/service.ts",
     "worker:once": "tsx --env-file=.env.local worker/live.ts",
     "db:migrate": "tsx db/migrate.ts",
