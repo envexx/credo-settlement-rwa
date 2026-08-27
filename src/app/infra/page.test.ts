@@ -3,6 +3,10 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 const pagePath = new URL("./page.tsx", import.meta.url);
+const sidebarPath = new URL(
+  "../../components/docs-sidebar.tsx",
+  import.meta.url,
+);
 
 test("developer docs match the executable API settlement flow", async () => {
   const page = await readFile(pagePath, "utf8");
@@ -36,5 +40,19 @@ test("developer docs state the prerequisites that otherwise block integration", 
   assert.match(page, /0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238/);
   assert.match(page, /operator-managed allowlist/i);
   assert.match(page, /chain key/i);
-  assert.match(page, /7,200 blocks/);
+  assert.match(page, /7,200\s+blocks/);
+});
+
+test("developer docs use a responsive sidebar and separated content sections", async () => {
+  const [page, sidebar] = await Promise.all([
+    readFile(pagePath, "utf8"),
+    readFile(sidebarPath, "utf8"),
+  ]);
+
+  assert.match(page, /SidebarProvider/);
+  assert.match(page, /DocsSidebar/);
+  assert.match(page, /DocSection/);
+  assert.doesNotMatch(page, /<details/);
+  assert.match(sidebar, /IntersectionObserver/);
+  assert.match(sidebar, /SidebarTrigger/);
 });
