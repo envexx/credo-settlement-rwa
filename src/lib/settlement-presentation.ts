@@ -9,8 +9,8 @@ export type SettlementPresentation = {
 };
 
 export function settlementPresentation(input: {
-  saleStatus?: string;
-  proofStatus?: string | null;
+  saleStatus?: string | undefined;
+  proofStatus?: string | null | undefined;
 }): SettlementPresentation {
   if (input.saleStatus === "SETTLED") {
     return {

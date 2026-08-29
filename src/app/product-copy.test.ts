@@ -73,3 +73,13 @@ test("every product route offers a keyboard skip target", async () => {
     assert.match(page, /<main[^>]*tabIndex=\{-1\}/);
   }
 });
+
+test("playground exposes recoverable accessible progress", async () => {
+  const playground = await source("../components/playground.tsx");
+  assert.match(playground, /SettlementStatus/);
+  assert.match(playground, /\/tx\/\$\{saleId\}/);
+  assert.match(playground, /Before you pay/);
+  assert.match(playground, /Sepolia test USDC/);
+  assert.match(playground, /Creditcoin CC3/);
+  assert.doesNotMatch(playground, /function statusCopy/);
+});

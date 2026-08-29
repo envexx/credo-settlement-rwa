@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import {
   AlertCircle,
@@ -23,6 +24,8 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { SettlementStatus } from "@/components/settlement-status";
+import { settlementPresentation } from "@/lib/settlement-presentation";
 
 type EthereumProvider = {
   request(args: { method: string; params?: unknown[] }): Promise<unknown>;
@@ -132,38 +135,6 @@ async function readUsdcBalance(
   return { instruction, amount };
 }
 
-function statusCopy(settlement?: Settlement) {
-  if (!settlement)
-    return {
-      title: "Reserve one live test RWA",
-      body: "Credo creates the escrow on Creditcoin for your wallet, then you pay exactly 1.00 test USDC on Sepolia.",
-    };
-  if (settlement.settlement)
-    return {
-      title: "Payment became ownership",
-      body: "The verified proof released TestRWA #1001 directly to your wallet on Creditcoin.",
-    };
-  if (settlement.proof)
-    return {
-      title: "Attestcoin proof is in progress",
-      body: `Worker status: ${settlement.proof.status.replaceAll("_", " ")}. Settlement typically takes 8–10 minutes.`,
-    };
-  if (settlement.payment)
-    return {
-      title: "Payment detected",
-      body: "Your Sepolia transfer is durably queued for proof verification.",
-    };
-  if (settlement.saleStatus === "RECLAIMED")
-    return {
-      title: "Reservation expired",
-      body: "The unpaid asset was returned to demo inventory. Reserve a new live RWA to try again.",
-    };
-  return {
-    title: "RWA is escrowed for your wallet",
-    body: "Pay exactly 1.00 test USDC on Sepolia. The payment tuple is locked on-chain.",
-  };
-}
-
 export function Playground() {
   const [account, setAccount] = useState("");
   const [sale, setSale] = useState<LiveSale>();
@@ -173,7 +144,10 @@ export function Playground() {
   const [error, setError] = useState("");
 
   const saleId = sale?.saleId ?? settlement?.saleId;
-  const copy = statusCopy(settlement);
+  const copy = settlementPresentation({
+    saleStatus: settlement?.saleStatus,
+    proofStatus: settlement?.proof?.status,
+  });
 
   useEffect(() => {
     const id = new URLSearchParams(window.location.search).get("sale");
@@ -403,12 +377,35 @@ export function Playground() {
 
         <section className="rounded-xl border bg-secondary/20 p-5 sm:p-6">
           <p className="technical-label">CURRENT STATUS</p>
-          <h3 className="mt-3 text-2xl font-semibold tracking-[-.035em]">
-            {copy.title}
-          </h3>
-          <p className="mt-2 text-sm leading-6 text-muted-foreground">
-            {copy.body}
-          </p>
+          <div className="mt-3">
+            <SettlementStatus copy={copy} />
+          </div>
+
+          {saleId ? (
+            <section
+              aria-labelledby="payment-preflight-title"
+              className="mt-5 rounded-lg border bg-background/55 p-4"
+            >
+              <h3
+                id="payment-preflight-title"
+                className="text-sm font-medium"
+              >
+                Before you pay
+              </h3>
+              <ul className="mt-3 space-y-2 text-xs leading-5 text-muted-foreground">
+                <li>
+                  {account
+                    ? "Buyer wallet is connected."
+                    : "Connect the reserved buyer wallet before paying."}
+                </li>
+                <li>Payment uses Sepolia test USDC.</li>
+                <li>Ownership settles on Creditcoin CC3.</li>
+                <li>
+                  The exact amount and recipient must match this reservation.
+                </li>
+              </ul>
+            </section>
+          ) : null}
 
           <div className="mt-7 space-y-3">
             {!saleId ? (
@@ -478,6 +475,11 @@ export function Playground() {
                   Open faucet <ExternalLink className="inline size-3" />
                 </a>
               </p>
+            ) : null}
+            {saleId ? (
+              <Button asChild variant="outline" size="sm" className="w-full">
+                <Link href={`/tx/${saleId}`}>Save recovery page</Link>
+              </Button>
             ) : null}
           </div>
 
