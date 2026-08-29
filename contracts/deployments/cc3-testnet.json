@@ -11,5 +11,28 @@
     "chainKey": 1,
     "chainId": 11155111,
     "usdc": "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238"
+  },
+  "deployment": {
+    "sourceCommit": "b70c4211939a5f1b7186e9637d5d41bef6e2cfb5",
+    "verified": false,
+    "txs": {
+      "TestRWA": {
+        "hash": "0xfd436fa3e965b8e66d22f72887349c45136a77e519b6f419899c209da8175ffd",
+        "explorer": "https://creditcoin-testnet.blockscout.com/tx/0xfd436fa3e965b8e66d22f72887349c45136a77e519b6f419899c209da8175ffd"
+      },
+      "SettleRWA": {
+        "hash": "0x80822e27d00dbf9f9ec57a6daff6447b05f70ae58726965d5de58be48cd13f89",
+        "explorer": "https://creditcoin-testnet.blockscout.com/tx/0x80822e27d00dbf9f9ec57a6daff6447b05f70ae58726965d5de58be48cd13f89"
+      },
+      "PaymentVerifierUSC": {
+        "hash": "0x91cb37733e53f1981e93c7df4638ef2b3d772dc0045ee12bc1a58721fce98e55",
+        "explorer": "https://creditcoin-testnet.blockscout.com/tx/0x91cb37733e53f1981e93c7df4638ef2b3d772dc0045ee12bc1a58721fce98e55"
+      }
+    }
+  },
+  "protocolLimits": {
+    "maxWindowBlocks": 50000,
+    "reclaimDelaySeconds": 86400,
+    "estimatedSourceBlockTimeSeconds": 12
   }
 }
