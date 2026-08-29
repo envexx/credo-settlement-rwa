@@ -14,7 +14,7 @@
 [![license](https://shieldcn.dev/github/license/envexx/credo-settlement-rwa.svg?variant=ghost&size=xs)](https://github.com/envexx/credo-settlement-rwa/blob/main/LICENSE)
 [![last commit](https://shieldcn.dev/github/last-commit/envexx/credo-settlement-rwa.svg?variant=ghost&size=xs)](https://github.com/envexx/credo-settlement-rwa/commits/main)
 
-**[Live App](https://credo.becoder.xyz)** · **[Video Demo](https://youtu.be/Ni58h6jGKDU)** · **[Developer Docs](https://credo.becoder.xyz/infra)** · **[Playground](https://credo.becoder.xyz/playground)** · **[Deck](docs/submission/credo-deck-professional.pdf)** · **[Evidence](docs/evidence)**
+**[Live App](https://credo.becoder.xyz)** · **[Video Demo](https://youtu.be/Ni58h6jGKDU)** · **[Developer Docs](https://credo.becoder.xyz/infra)** · **[Developer integration](docs/integration/README.md)** · **[Playground](https://credo.becoder.xyz/playground)** · **[Deck](docs/submission/credo-deck-professional.pdf)** · **[Evidence](docs/evidence)**
 
 *Built for BUIDL CTC 2026 Fall — RWA Track · Powered by the Attestcoin Protocol (USC v2)*
 

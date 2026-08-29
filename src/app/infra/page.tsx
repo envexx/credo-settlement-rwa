@@ -127,6 +127,14 @@ export default function InfraPage() {
                 worker discovers transactions. Attestcoin proves receipts. The
                 contract independently decides.
               </blockquote>
+              <Link
+                href="https://github.com/envexx/credo-settlement-rwa/blob/main/docs/integration/README.md"
+                className="inline-flex min-h-11 items-center gap-2 rounded-md border px-4 text-sm font-medium hover:bg-muted"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Repository integration guide <ArrowRight />
+              </Link>
             </DocSection>
             <DocHeading id="quickstart">Quickstart</DocHeading>
             <p className="mt-4 text-sm leading-7 text-muted-foreground">

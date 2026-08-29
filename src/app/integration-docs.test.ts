@@ -60,3 +60,22 @@ test("parameter specification covers createSale integration hazards", async () =
   assert.match(spec, /50,000/);
   assert.match(spec, /24 hours/);
 });
+
+test("canonical guide documents only implemented integration routes", async () => {
+  const [guide, readme, infra] = await Promise.all([
+    content("docs/integration/README.md"),
+    content("README.md"),
+    content("src/app/infra/page.tsx"),
+  ]);
+  for (const route of [
+    "/api/v1/sales/prepare",
+    "/api/v1/sales/index",
+    "/api/v1/sales/:saleId/payment",
+    "/api/v1/sales/:saleId/settlement",
+  ]) {
+    assert.match(guide, new RegExp(route.replaceAll("/", "\\/")));
+  }
+  assert.doesNotMatch(guide, /POST \/api\/v1\/sales(?:\s|`)/);
+  assert.match(readme, /docs\/integration\/README\.md/);
+  assert.match(infra, /Repository integration guide/);
+});
