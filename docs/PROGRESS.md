@@ -1,5 +1,16 @@
 # Project progress
 
+## 30 August 2026 — three-day sprint baseline
+
+- Branch and commit: `main` at `dee0d328f7ff34767485a03141607f4e27f93380`.
+- Preserved user changes: replacement of the professional PDF deck.
+- `npm test`: PASS — 28 tests.
+- `npm run typecheck`: PASS.
+- `npm run lint`: PASS with zero warnings.
+- `npm run format:check`: PASS.
+- `npm run build`: PASS with Next.js 16.3.3; all expected application and API
+  routes compiled.
+
 ## 29 August 2026 — keyboard navigation
 
 Inspected:
