@@ -26,3 +26,13 @@ test("deployment manifest exposes integration metadata", async () => {
     assert.match(manifest.deployment.txs[name].explorer, /^https:\/\//);
   }
 });
+
+test("published integration ABIs match generated public artifacts", async () => {
+  for (const name of ["SettleRWA", "TestRWA", "PaymentVerifierUSC"]) {
+    const generated = JSON.parse(await content(`public/abi/${name}.json`));
+    const published = JSON.parse(
+      await content(`docs/integration/abis/${name}.json`),
+    );
+    assert.deepEqual(published, generated);
+  }
+});
