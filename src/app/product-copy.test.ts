@@ -83,3 +83,13 @@ test("playground exposes recoverable accessible progress", async () => {
   assert.match(playground, /Creditcoin CC3/);
   assert.doesNotMatch(playground, /function statusCopy/);
 });
+
+test("recovery route reads live settlement state", async () => {
+  const [page, component] = await Promise.all([
+    source("tx/[saleId]/page.tsx"),
+    source("../components/recovery-status.tsx"),
+  ]);
+  assert.match(page, /RecoveryStatus/);
+  assert.match(component, /api\/v1\/sales\/\$\{saleId\}\/settlement/);
+  assert.doesNotMatch(page, /489 SEC/);
+});
