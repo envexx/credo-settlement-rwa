@@ -241,10 +241,10 @@ export default function Home() {
             </p>
             <div className="credo-proof-links">
               <a href={paymentTx} target="_blank" rel="noreferrer">
-                Sepolia payment <ArrowUpRight />
+                View payment on Sepolia <ArrowUpRight />
               </a>
               <a href={settlementTx} target="_blank" rel="noreferrer">
-                Creditcoin settlement <ArrowUpRight />
+                View settlement on Creditcoin CC3 <ArrowUpRight />
               </a>
             </div>
           </div>
