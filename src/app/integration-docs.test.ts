@@ -36,3 +36,27 @@ test("published integration ABIs match generated public artifacts", async () => 
     assert.deepEqual(published, generated);
   }
 });
+
+test("parameter specification covers createSale integration hazards", async () => {
+  const spec = await content("docs/integration/PARAM-SPEC.md");
+  for (const argument of [
+    "buyer",
+    "assetContract",
+    "tokenId",
+    "assetAmount",
+    "paymentChainKey",
+    "paymentChainId",
+    "paymentToken",
+    "paymentRecipient",
+    "paymentAmount",
+    "sourceStartBlock",
+    "sourceEndBlock",
+  ]) {
+    assert.match(spec, new RegExp(`\\b${argument}\\b`));
+  }
+  assert.match(spec, /chainKey is not chainId/);
+  assert.match(spec, /Do not use JavaScript `number`/);
+  assert.match(spec, /0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238/);
+  assert.match(spec, /50,000/);
+  assert.match(spec, /24 hours/);
+});
