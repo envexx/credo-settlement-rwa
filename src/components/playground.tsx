@@ -15,6 +15,7 @@ import type { LucideIcon } from "lucide-react";
 import {
   decodeFunctionResult,
   encodeFunctionData,
+  parseAbi,
   type Address,
   type Hex,
 } from "viem";
@@ -61,10 +62,10 @@ type PaymentInstruction = {
   amountRaw: string;
 };
 
-const erc20Abi = [
+const erc20Abi = parseAbi([
   "function balanceOf(address) view returns(uint256)",
   "function transfer(address,uint256) returns(bool)",
-] as const;
+]);
 
 const short = (value?: string) =>
   !value
