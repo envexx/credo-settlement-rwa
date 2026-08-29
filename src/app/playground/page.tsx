@@ -10,7 +10,11 @@ export default function PlaygroundPage() {
   return (
     <>
       <SiteHeader />
-      <main className="container-shell py-10 sm:py-14 lg:py-18">
+      <main
+        id="main-content"
+        tabIndex={-1}
+        className="container-shell py-10 sm:py-14 lg:py-18"
+      >
         <div className="mb-9 grid gap-5 lg:grid-cols-[1fr_360px] lg:items-end">
           <div>
             <p className="technical-label">Live testnet settlement</p>

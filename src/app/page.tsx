@@ -32,7 +32,7 @@ export default function Home() {
   return (
     <>
       <SiteHeader />
-      <main className="credo-landing">
+      <main id="main-content" className="credo-landing" tabIndex={-1}>
         <section className="credo-hero">
           <div className="container-shell credo-hero-copy">
             <Badge variant="outline">

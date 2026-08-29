@@ -21,7 +21,7 @@ export default async function TransactionPage({
   return (
     <>
       <SiteHeader />
-      <main className="container-shell py-14">
+      <main id="main-content" className="container-shell py-14" tabIndex={-1}>
         <Button asChild variant="ghost" size="sm" className="mb-8">
           <Link href="/playground">
             <ArrowLeft />

@@ -98,6 +98,30 @@ body::before {
   width: min(1180px, calc(100% - 2rem));
   margin-inline: auto;
 }
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 100;
+  min-height: 44px;
+  padding: 0.7rem 1rem;
+  border: 1px solid var(--primary);
+  border-radius: var(--radius-md);
+  background: var(--foreground);
+  color: var(--background);
+  font-size: 0.875rem;
+  font-weight: 600;
+  transform: translateY(calc(-100% - 1rem));
+  transition: transform 160ms ease;
+}
+.skip-link:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 3px;
+  transform: translateY(0);
+}
+#main-content:focus {
+  outline: none;
+}
 .technical-label {
   font-family: var(--font-geist-mono);
   font-size: 0.68rem;

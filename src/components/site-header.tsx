@@ -62,6 +62,9 @@ const menus: Array<{
 export function SiteHeader() {
   return (
     <header className="site-header sticky top-0 z-50 border-b bg-background/88 backdrop-blur-xl">
+      <a href="#main-content" className="skip-link">
+        Skip to main content
+      </a>
       <div className="container-shell flex h-18 items-center justify-between">
         <Link
           href="/"

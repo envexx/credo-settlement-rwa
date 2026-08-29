@@ -42,3 +42,20 @@ test("root layout declares its smooth scroll behavior to Next.js", async () => {
   const layout = await source("layout.tsx");
   assert.match(layout, /data-scroll-behavior="smooth"/);
 });
+
+test("every product route offers a keyboard skip target", async () => {
+  const [header, ...pages] = await Promise.all([
+    source("../components/site-header.tsx"),
+    source("page.tsx"),
+    source("infra/page.tsx"),
+    source("playground/page.tsx"),
+    source("tx/[saleId]/page.tsx"),
+  ]);
+
+  assert.match(header, /href="#main-content"/);
+  assert.match(header, /Skip to main content/);
+  for (const page of pages) {
+    assert.match(page, /<main[^>]*id="main-content"/);
+    assert.match(page, /<main[^>]*tabIndex=\{-1\}/);
+  }
+});

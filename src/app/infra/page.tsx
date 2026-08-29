@@ -80,7 +80,11 @@ export default function InfraPage() {
       <SidebarProvider>
         <DocsSidebar sections={sections} />
         <SidebarInset className="bg-transparent">
-          <main className="mx-auto w-full max-w-5xl px-5 py-8 sm:px-8 lg:px-12 lg:py-12">
+          <main
+            id="main-content"
+            tabIndex={-1}
+            className="mx-auto w-full max-w-5xl px-5 py-8 sm:px-8 lg:px-12 lg:py-12"
+          >
             <div className="mb-7 flex items-center gap-3">
               <DocsMobileTrigger />
               <Breadcrumb>
