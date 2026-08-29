@@ -386,10 +386,7 @@ export function Playground() {
               aria-labelledby="payment-preflight-title"
               className="mt-5 rounded-lg border bg-background/55 p-4"
             >
-              <h3
-                id="payment-preflight-title"
-                className="text-sm font-medium"
-              >
+              <h3 id="payment-preflight-title" className="text-sm font-medium">
                 Before you pay
               </h3>
               <ul className="mt-3 space-y-2 text-xs leading-5 text-muted-foreground">

@@ -1,8 +1,5 @@
 import Link from "next/link";
-import {
-  ArrowUpRight,
-  ChevronDown,
-} from "lucide-react";
+import { ArrowUpRight, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import NextImage from "next/image";
 import { MobileNav } from "@/components/mobile-nav";

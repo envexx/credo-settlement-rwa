@@ -1,11 +1,7 @@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import type { SettlementPresentation } from "@/lib/settlement-presentation";
 
-export function SettlementStatus({
-  copy,
-}: {
-  copy: SettlementPresentation;
-}) {
+export function SettlementStatus({ copy }: { copy: SettlementPresentation }) {
   return (
     <Alert data-tone={copy.tone}>
       <div aria-live="polite" aria-atomic="true">

@@ -45,8 +45,5 @@ test("marks settlement as terminal", () => {
     proofStatus: "SETTLED",
   });
   assert.equal(result.terminal, true);
-  assert.equal(
-    result.nextAction,
-    "Inspect the public settlement evidence.",
-  );
+  assert.equal(result.nextAction, "Inspect the public settlement evidence.");
 });

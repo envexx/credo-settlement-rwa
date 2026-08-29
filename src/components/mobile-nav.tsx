@@ -34,7 +34,10 @@ export function MobileNav() {
             Product, evidence, documentation, and live settlement.
           </SheetDescription>
         </SheetHeader>
-        <nav className="flex-1 overflow-y-auto px-4 pb-6" aria-label="Mobile primary">
+        <nav
+          className="flex-1 overflow-y-auto px-4 pb-6"
+          aria-label="Mobile primary"
+        >
           {siteMenus.map((menu) => (
             <section className="mt-6" key={menu.label}>
               <h2 className="technical-label">{menu.label}</h2>
