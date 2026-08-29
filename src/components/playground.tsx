@@ -228,44 +228,50 @@ export function Playground() {
     };
   }, [account, saleId, settlement?.saleStatus]);
 
+  async function authenticateWallet() {
+    const ethereum = provider();
+    if (!ethereum)
+      throw new Error(
+        "Install an EVM wallet to continue with live settlement.",
+      );
+    const accounts = (await ethereum.request({
+      method: "eth_requestAccounts",
+    })) as string[];
+    const walletAddress = accounts[0]?.toLowerCase();
+    if (!walletAddress) throw new Error("Wallet did not return an account.");
+    const challenge = await responseJson<{ message: string }>(
+      await fetch("/api/v1/auth/nonce", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ walletAddress }),
+      }),
+      "Sign-in challenge is unavailable",
+    );
+    const signature = await ethereum.request({
+      method: "personal_sign",
+      params: [challenge.message, walletAddress],
+    });
+    await responseJson(
+      await fetch("/api/v1/auth/verify", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          walletAddress,
+          message: challenge.message,
+          signature,
+        }),
+      }),
+      "Wallet signature was not accepted",
+    );
+    setAccount(walletAddress);
+    return { ethereum, walletAddress };
+  }
+
   async function reserve() {
     setPending("reserve");
     setError("");
     try {
-      const ethereum = provider();
-      if (!ethereum)
-        throw new Error("Install an EVM wallet to reserve a live test RWA.");
-      const accounts = (await ethereum.request({
-        method: "eth_requestAccounts",
-      })) as string[];
-      const walletAddress = accounts[0]?.toLowerCase();
-      if (!walletAddress) throw new Error("Wallet did not return an account.");
-      setAccount(walletAddress);
-
-      const challenge = await responseJson<{ message: string }>(
-        await fetch("/api/v1/auth/nonce", {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({ walletAddress }),
-        }),
-        "Sign-in challenge is unavailable",
-      );
-      const signature = await ethereum.request({
-        method: "personal_sign",
-        params: [challenge.message, walletAddress],
-      });
-      await responseJson(
-        await fetch("/api/v1/auth/verify", {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({
-            walletAddress,
-            message: challenge.message,
-            signature,
-          }),
-        }),
-        "Wallet signature was not accepted",
-      );
+      const { ethereum, walletAddress } = await authenticateWallet();
       const created = await responseJson<LiveSale>(
         await fetch("/api/v1/playground/live-sale", { method: "POST" }),
         "Could not reserve a live test RWA",
@@ -279,6 +285,20 @@ export function Playground() {
     } catch (reason) {
       setError(
         reason instanceof Error ? reason.message : "Live reservation failed",
+      );
+    } finally {
+      setPending(undefined);
+    }
+  }
+
+  async function connectToPay() {
+    setPending("pay");
+    setError("");
+    try {
+      await authenticateWallet();
+    } catch (reason) {
+      setError(
+        reason instanceof Error ? reason.message : "Wallet connection failed",
       );
     } finally {
       setPending(undefined);
@@ -403,6 +423,21 @@ export function Playground() {
                   <Wallet />
                 )}
                 Connect & reserve live RWA
+              </Button>
+            ) : !account &&
+              settlement?.saleStatus === "OPEN" &&
+              !settlement.payment ? (
+              <Button
+                className="min-h-11 w-full"
+                disabled={Boolean(pending)}
+                onClick={() => void connectToPay()}
+              >
+                {pending === "pay" ? (
+                  <LoaderCircle className="animate-spin" />
+                ) : (
+                  <Wallet />
+                )}
+                Connect wallet to pay
               </Button>
             ) : canPay ? (
               <Button

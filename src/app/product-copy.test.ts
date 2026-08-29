@@ -41,6 +41,13 @@ test("playground passes a parsed ERC-20 ABI to viem", async () => {
   assert.match(component, /const erc20Abi = parseAbi\(/);
 });
 
+test("an open live sale can reconnect its buyer wallet after refresh", async () => {
+  const component = await source("../components/playground.tsx");
+
+  assert.match(component, /Connect wallet to pay/);
+  assert.match(component, /authenticateWallet/);
+});
+
 test("the mock playground route is removed", async () => {
   await assert.rejects(source("api/demo/route.ts"));
 });
