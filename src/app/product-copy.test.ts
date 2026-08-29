@@ -93,3 +93,15 @@ test("recovery route reads live settlement state", async () => {
   assert.match(component, /api\/v1\/sales\/\$\{saleId\}\/settlement/);
   assert.doesNotMatch(page, /489 SEC/);
 });
+
+test("site header exposes primary navigation on mobile", async () => {
+  const [header, mobile, data] = await Promise.all([
+    source("../components/site-header.tsx"),
+    source("../components/mobile-nav.tsx"),
+    source("../components/site-navigation.ts"),
+  ]);
+  assert.match(header, /MobileNav/);
+  assert.match(mobile, /aria-label="Open primary navigation"/);
+  assert.match(mobile, /min-h-11/);
+  assert.match(data, /Interactive playground/);
+});

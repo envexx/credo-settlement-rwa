@@ -2,62 +2,13 @@ import Link from "next/link";
 import {
   ArrowUpRight,
   ChevronDown,
-  FileCode2,
-  Network,
-  ReceiptText,
-  ShieldCheck,
 } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import NextImage from "next/image";
+import { MobileNav } from "@/components/mobile-nav";
+import { siteMenus } from "@/components/site-navigation";
 
 const logo = "/brands/LOGO.png";
-
-const menus: Array<{
-  label: string;
-  items: Array<[string, string, string, LucideIcon]>;
-}> = [
-  {
-    label: "Product",
-    items: [
-      [
-        "Mechanism",
-        "How proof-triggered settlement works",
-        "/#mechanism",
-        Network,
-      ],
-      [
-        "Evidence",
-        "Inspect the public testnet proof",
-        "/#evidence",
-        ShieldCheck,
-      ],
-    ],
-  },
-  {
-    label: "Developers",
-    items: [
-      [
-        "Developer quickstart",
-        "Integrate a sale from request to settlement",
-        "/infra#quickstart",
-        FileCode2,
-      ],
-      [
-        "API reference",
-        "Authentication, sales and payment endpoints",
-        "/infra#api",
-        Network,
-      ],
-      [
-        "Interactive playground",
-        "Run the complete settlement flow",
-        "/playground",
-        ReceiptText,
-      ],
-    ],
-  },
-];
 
 export function SiteHeader() {
   return (
@@ -86,7 +37,7 @@ export function SiteHeader() {
           className="hidden items-center gap-1 rounded-full border bg-card/70 p-1 text-xs md:flex"
           aria-label="Primary"
         >
-          {menus.map((menu) => (
+          {siteMenus.map((menu) => (
             <div key={menu.label} className="nav-menu group relative">
               <button className="flex items-center gap-1 rounded-full px-4 py-2 text-muted-foreground outline-none hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-primary/60">
                 {menu.label}
@@ -124,15 +75,18 @@ export function SiteHeader() {
             Documentation
           </Link>
         </nav>
-        <Button
-          asChild
-          size="sm"
-          className="h-8 bg-primary text-primary-foreground hover:bg-primary/90"
-        >
-          <Link href="/playground">
-            Open Playground <ArrowUpRight />
-          </Link>
-        </Button>
+        <div className="flex items-center gap-2">
+          <MobileNav />
+          <Button
+            asChild
+            size="sm"
+            className="hidden h-8 bg-primary text-primary-foreground hover:bg-primary/90 sm:inline-flex"
+          >
+            <Link href="/playground">
+              Open Playground <ArrowUpRight />
+            </Link>
+          </Button>
+        </div>
       </div>
     </header>
   );
