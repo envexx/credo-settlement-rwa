@@ -93,21 +93,25 @@ export function RecoveryStatus({ saleId }: { saleId: string }) {
           </AlertDescription>
         </Alert>
       ) : null}
-      <SettlementStatus copy={copy} />
+      {settlement ? <SettlementStatus copy={copy} /> : null}
       <dl className="grid gap-4 text-sm sm:grid-cols-2">
         <RecoveryFact label="Sale ID" value={saleId} />
-        <RecoveryFact
-          label="Proof status"
-          value={settlement?.proof?.status ?? "Not started"}
-        />
-        <RecoveryFact
-          label="Payment transaction"
-          value={settlement?.payment?.sourceTxHash ?? "Not submitted"}
-        />
-        <RecoveryFact
-          label="Settlement transaction"
-          value={settlement?.settlement?.creditcoinTxHash ?? "Pending"}
-        />
+        {settlement ? (
+          <>
+            <RecoveryFact
+              label="Proof status"
+              value={settlement.proof?.status ?? "Not started"}
+            />
+            <RecoveryFact
+              label="Payment transaction"
+              value={settlement.payment?.sourceTxHash ?? "Not submitted"}
+            />
+            <RecoveryFact
+              label="Settlement transaction"
+              value={settlement.settlement?.creditcoinTxHash ?? "Pending"}
+            />
+          </>
+        ) : null}
       </dl>
       <div className="flex flex-wrap gap-3">
         {settlement?.payment?.sourceTxHash ? (

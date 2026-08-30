@@ -91,6 +91,10 @@ test("recovery route reads live settlement state", async () => {
   ]);
   assert.match(page, /RecoveryStatus/);
   assert.match(component, /api\/v1\/sales\/\$\{saleId\}\/settlement/);
+  assert.match(
+    component,
+    /settlement \? <SettlementStatus copy=\{copy\} \/> : null/,
+  );
   assert.doesNotMatch(page, /489 SEC/);
 });
 
