@@ -48,6 +48,17 @@ test("an open live sale can reconnect its buyer wallet after refresh", async () 
   assert.match(component, /authenticateWallet/);
 });
 
+test("playground preflights the reserved payment on Sepolia", async () => {
+  const component = await source("../components/playground.tsx");
+
+  assert.match(component, /function switchToSepolia/);
+  assert.match(
+    component,
+    /const \[payment, setPayment\] = useState<PaymentInstruction>\(\)/,
+  );
+  assert.match(component, /balance < BigInt\(payment\.amountRaw\)/);
+});
+
 test("the mock playground route is removed", async () => {
   await assert.rejects(source("api/demo/route.ts"));
 });

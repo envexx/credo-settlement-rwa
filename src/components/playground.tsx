@@ -69,6 +69,7 @@ const erc20Abi = parseAbi([
   "function balanceOf(address) view returns(uint256)",
   "function transfer(address,uint256) returns(bool)",
 ]);
+const sepoliaChainId = "0xaa36a7";
 
 const short = (value?: string) =>
   !value
@@ -114,10 +115,9 @@ async function getPaymentInstruction(id: string) {
 
 async function readUsdcBalance(
   ethereum: EthereumProvider,
-  saleId: string,
+  instruction: PaymentInstruction,
   wallet: string,
 ) {
-  const instruction = await getPaymentInstruction(saleId);
   const data = encodeFunctionData({
     abi: erc20Abi,
     functionName: "balanceOf",
@@ -135,10 +135,23 @@ async function readUsdcBalance(
   return { instruction, amount };
 }
 
+async function switchToSepolia(ethereum: EthereumProvider) {
+  const current = await ethereum.request({ method: "eth_chainId" });
+  if (current !== sepoliaChainId)
+    await ethereum.request({
+      method: "wallet_switchEthereumChain",
+      params: [{ chainId: sepoliaChainId }],
+    });
+  const active = await ethereum.request({ method: "eth_chainId" });
+  if (active !== sepoliaChainId)
+    throw new Error("Switch to Sepolia before paying with test USDC.");
+}
+
 export function Playground() {
   const [account, setAccount] = useState("");
   const [sale, setSale] = useState<LiveSale>();
   const [settlement, setSettlement] = useState<Settlement>();
+  const [payment, setPayment] = useState<PaymentInstruction>();
   const [balance, setBalance] = useState<bigint>();
   const [pending, setPending] = useState<"reserve" | "pay">();
   const [error, setError] = useState("");
@@ -185,23 +198,6 @@ export function Playground() {
     return () => window.clearInterval(interval);
   }, [saleId, settlement?.saleStatus, settlement?.settlement]);
 
-  useEffect(() => {
-    if (!saleId || !account || settlement?.saleStatus !== "OPEN") return;
-    const ethereum = provider();
-    if (!ethereum) return;
-    let cancelled = false;
-    void readUsdcBalance(ethereum, saleId, account)
-      .then(({ amount }) => {
-        if (!cancelled) setBalance(amount);
-      })
-      .catch(() => {
-        if (!cancelled) setBalance(undefined);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [account, saleId, settlement?.saleStatus]);
-
   async function authenticateWallet() {
     const ethereum = provider();
     if (!ethereum)
@@ -237,8 +233,21 @@ export function Playground() {
       }),
       "Wallet signature was not accepted",
     );
-    setAccount(walletAddress);
     return { ethereum, walletAddress };
+  }
+
+  async function preflightPayment(
+    ethereum: EthereumProvider,
+    id: string,
+    wallet: string,
+  ) {
+    await switchToSepolia(ethereum);
+    const instruction = await getPaymentInstruction(id);
+    const { amount } = await readUsdcBalance(ethereum, instruction, wallet);
+    setAccount(wallet);
+    setPayment(instruction);
+    setBalance(amount);
+    return { instruction, amount };
   }
 
   async function reserve() {
@@ -253,9 +262,7 @@ export function Playground() {
       setSale(created);
       window.history.replaceState({}, "", `/playground?sale=${created.saleId}`);
       setSettlement(await getSettlement(created.saleId));
-      setBalance(
-        (await readUsdcBalance(ethereum, created.saleId, walletAddress)).amount,
-      );
+      await preflightPayment(ethereum, created.saleId, walletAddress);
     } catch (reason) {
       setError(
         reason instanceof Error ? reason.message : "Live reservation failed",
@@ -269,8 +276,13 @@ export function Playground() {
     setPending("pay");
     setError("");
     try {
-      await authenticateWallet();
+      if (!saleId) return;
+      const { ethereum, walletAddress } = await authenticateWallet();
+      await preflightPayment(ethereum, saleId, walletAddress);
     } catch (reason) {
+      setAccount("");
+      setPayment(undefined);
+      setBalance(undefined);
       setError(
         reason instanceof Error ? reason.message : "Wallet connection failed",
       );
@@ -287,11 +299,12 @@ export function Playground() {
       const ethereum = provider();
       if (!ethereum)
         throw new Error("Install an EVM wallet to pay with test USDC.");
-      await ethereum.request({
-        method: "wallet_switchEthereumChain",
-        params: [{ chainId: "0xaa36a7" }],
-      });
-      const { instruction, amount } = await readUsdcBalance(
+      const accounts = (await ethereum.request({
+        method: "eth_accounts",
+      })) as string[];
+      if (accounts[0]?.toLowerCase() !== account)
+        throw new Error("Reconnect the reserved buyer wallet before paying.");
+      const { instruction, amount } = await preflightPayment(
         ethereum,
         saleId,
         account,
@@ -326,10 +339,14 @@ export function Playground() {
     }
   }
 
-  const insufficient = balance !== undefined && balance < 1_000_000n;
+  const insufficient =
+    payment !== undefined &&
+    balance !== undefined &&
+    balance < BigInt(payment.amountRaw);
   const canPay = Boolean(
     account &&
     saleId &&
+    payment &&
     settlement?.saleStatus === "OPEN" &&
     !settlement.payment,
   );
