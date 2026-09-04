@@ -1,10 +1,11 @@
 import { chainInfo, proofProvider } from "@gluwa/usc-sdk";
-import { Contract, ethers, type Log } from "ethers";
+import { Contract, ethers } from "ethers";
 import { readFile } from "node:fs/promises";
 import { config } from "../src/lib/config";
 import type { IndexedSale } from "../src/lib/store";
 import { creditcoinProvider } from "../src/lib/rpc";
 import { validateReceipt } from "./core";
+import { acceptedQueryId } from "./reconcile";
 
 const verifierAbi = [
   "function executePaymentProof(bytes32,uint64,uint64,bytes,bytes32,tuple(bytes32 hash,bool isLeft)[],bytes32,bytes32[]) returns (bool)",
@@ -14,7 +15,11 @@ const settlementAbi = [
   "function getSale(bytes32) view returns(tuple(address seller,address buyer,address assetContract,uint256 tokenId,uint256 assetAmount,uint64 paymentChainKey,uint64 paymentChainId,address paymentToken,address paymentRecipient,uint256 paymentAmount,uint64 sourceStartBlock,uint64 sourceEndBlock,uint64 reclaimAfter,uint8 status))",
 ];
 
-export async function processLivePayment(sale: IndexedSale, txHash: string) {
+export async function processLivePayment(
+  sale: IndexedSale,
+  txHash: string,
+  onSubmitted?: (settlementTxHash: string) => Promise<void>,
+) {
   if (
     !config.SEPOLIA_RPC_URL ||
     !config.CREDITCOIN_WORKER_PRIVATE_KEY ||
@@ -89,22 +94,12 @@ export async function processLivePayment(sale: IndexedSale, txHash: string) {
       1_500_000n + BigInt(proof.continuityProof.roots.length) * 10_000n;
   }
   const tx = await execute(...args, { gasLimit });
+  await onSubmitted?.(tx.hash);
   const settled = await tx.wait();
   if (!settled || settled.status !== 1)
     throw new Error("SETTLEMENT_TRANSACTION_FAILED");
-  const accepted = settled.logs
-    .map((log: Log) => {
-      try {
-        return contract.interface.parseLog(log);
-      } catch {
-        return null;
-      }
-    })
-    .find(
-      (log: ReturnType<typeof contract.interface.parseLog> | null) =>
-        log?.name === "PaymentProofAccepted",
-    );
-  if (!accepted) throw new Error("PAYMENT_PROOF_EVENT_NOT_FOUND");
+  const queryId = acceptedQueryId(settled);
+  if (!queryId) throw new Error("PAYMENT_PROOF_EVENT_NOT_FOUND");
   const onchainSale = await new Contract(
     config.SETTLE_RWA_ADDRESS!,
     settlementAbi,
@@ -115,7 +110,7 @@ export async function processLivePayment(sale: IndexedSale, txHash: string) {
   return {
     creditcoinTxHash: settled.hash as string,
     sourceBlock: receipt.blockNumber.toString(),
-    queryId: String(accepted.args.queryId),
+    queryId,
   };
 }
 
