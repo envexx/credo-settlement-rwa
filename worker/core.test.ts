@@ -1,6 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { isRetryable, retryDelay, runStage } from "./core.ts";
+import {
+  PermanentPaymentError,
+  isRetryable,
+  retryDelay,
+  runStage,
+} from "./core.ts";
 import { shouldReclaimAfterRestart } from "./recovery.ts";
 
 test("retry policy caps at five minutes", () => {
@@ -8,12 +13,18 @@ test("retry policy caps at five minutes", () => {
   assert.equal(retryDelay(99), 300_000);
   assert.equal(isRetryable(new Error("HTTP 429")), true);
   assert.equal(isRetryable(new Error("SOURCE_TX_PENDING")), true);
-  assert.equal(isRetryable(new Error("wrong buyer")), false);
+  // Unknown wording (e.g. new proof-builder messages) retries; only the
+  // deterministic validation errors are terminal.
+  assert.equal(isRetryable(new Error("unknown provider wording")), true);
+  assert.equal(
+    isRetryable(new PermanentPaymentError("PAYMENT_TRANSFER_NOT_FOUND")),
+    false,
+  );
 });
 test("permanent failures are not retried", async () => {
   const job = { status: "RECEIVED" as const, attemptCount: 0 };
   const result = await runStage(job, async () => {
-    throw new Error("wrong buyer");
+    throw new PermanentPaymentError("PAYMENT_TRANSFER_NOT_FOUND");
   });
   assert.equal(result.status, "PERMANENT_REJECTION");
 });

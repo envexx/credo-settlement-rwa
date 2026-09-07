@@ -1,6 +1,6 @@
 import postgres from "postgres";
 import type { IndexedSale } from "../src/lib/store";
-import { isRetryable, retryDelay } from "./core";
+import { isRetryable, maxJobAttempts, retryDelay } from "./core";
 import { processLivePayment } from "./live";
 import { drainAndExit } from "./drain";
 import { isAlreadyProcessedError } from "./reconcile";
@@ -163,11 +163,12 @@ async function tick() {
         return true;
       }
     }
-    const attempt = Number(job.attempt_count) + 1;
     const retryable = isRetryable(error);
+    const attempt = Number(job.attempt_count) + 1;
+    const capped = attempt >= maxJobAttempts;
     const next = new Date(Date.now() + retryDelay(attempt));
     const message = error instanceof Error ? error.message : String(error);
-    if (!retryable)
+    if (!retryable || capped)
       await sql`UPDATE proof_jobs SET creditcoin_tx_hash=NULL, attempt_count=${attempt}, status='PERMANENT_REJECTION', next_retry_at=NULL, updated_at=now() WHERE id=${job.id}`;
     else
       await sql`UPDATE proof_jobs SET attempt_count=${attempt}, status='RETRYABLE_ERROR', next_retry_at=${next}, updated_at=now() WHERE id=${job.id}`;

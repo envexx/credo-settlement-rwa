@@ -38,7 +38,13 @@ const schema = z.object({
     .optional()
     .transform((value) => value || undefined)
     .pipe(z.string().min(32).optional()),
-  SIWE_DOMAIN: z.string().default("localhost"),
+  SIWE_DOMAIN: z
+    .string()
+    .optional()
+    .transform(
+      (value) =>
+        value || new URL(process.env.APP_URL ?? "http://localhost:3000").host,
+    ),
   CREDITCOIN_WORKER_PRIVATE_KEY: z
     .string()
     .regex(/^0x[a-fA-F0-9]{64}$/)

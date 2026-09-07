@@ -2,12 +2,14 @@ import { requireWallet } from "@/lib/auth";
 import { ApiError, apiError } from "@/lib/http";
 import { paymentRequest } from "@/lib/schemas";
 import { findSale, persistPayment } from "@/lib/store";
+import { protectRequest } from "@/lib/security";
 import { NextResponse } from "next/server";
 export async function POST(
   request: Request,
   context: { params: Promise<{ saleId: string }> },
 ) {
   try {
+    protectRequest(request);
     const wallet = await requireWallet();
     const { saleId } = await context.params;
     const sale = await findSale(saleId);

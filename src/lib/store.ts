@@ -33,6 +33,18 @@ export type PaymentStatus =
   | "SETTLED"
   | "RETRYABLE_ERROR"
   | "PERMANENT_REJECTION";
+const activePaymentStatuses = [
+  "RECEIVED",
+  "SOURCE_TX_PENDING",
+  "SOURCE_TX_CONFIRMED",
+  "LOCALLY_MATCHED",
+  "WAITING_ATTESTATION",
+  "GENERATING_PROOF",
+  "PROOF_READY",
+  "SUBMITTING",
+  "SUBMITTED",
+  "RETRYABLE_ERROR",
+] as const;
 export type PaymentAttempt = {
   id: string;
   saleId: string;
@@ -247,11 +259,22 @@ export async function persistPayment(
   sourceTxHash: string,
 ): Promise<PaymentAttempt> {
   if (!sql) return addPayment(saleId, sourceTxHash);
-  const paymentId = randomUUID();
-  const jobId = randomUUID();
   const sale = await findSale(saleId);
   if (!sale) throw new Error("SALE_NOT_FOUND");
+  const paymentId = randomUUID();
+  const jobId = randomUUID();
   const rows = await sql.begin(async (tx) => {
+    const active =
+      await tx`SELECT id,source_tx_hash,status FROM payment_attempts WHERE sale_id=${saleId} AND status = ANY(${activePaymentStatuses}::text[]) ORDER BY detected_at DESC LIMIT 1`;
+    if (active[0]) {
+      if (active[0].source_tx_hash.toLowerCase() !== sourceTxHash.toLowerCase())
+        throw new ApiError(
+          409,
+          "PAYMENT_ALREADY_IN_PROGRESS",
+          "This sale already has an active payment attempt",
+        );
+      return active;
+    }
     const existing =
       await tx`SELECT id,sale_id,source_tx_hash,status,source_block,last_error_code,last_error_message FROM payment_attempts WHERE source_tx_hash=${sourceTxHash}`;
     if (existing[0]) {

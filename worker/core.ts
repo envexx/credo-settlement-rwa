@@ -18,14 +18,21 @@ const transientPatterns = [
 export const retryDelaysMs = [
   15_000, 30_000, 60_000, 120_000, 300_000,
 ] as const;
+export const maxJobAttempts = 10;
 
 export class PermanentPaymentError extends Error {}
 export function retryDelay(attempt: number) {
   return retryDelaysMs[Math.min(attempt, retryDelaysMs.length - 1)]!;
 }
 export function isRetryable(error: unknown) {
+  if (error instanceof PermanentPaymentError) return false;
   const message = error instanceof Error ? error.message : String(error);
-  return transientPatterns.some((pattern) => pattern.test(message));
+  const transient = transientPatterns.some((pattern) => pattern.test(message));
+  if (transient) return true;
+  // ponytail: unknown proof-builder/RPC wording defaults to retryable so a
+  // valid paid sale is never terminally rejected by a new message shape;
+  // maxJobAttempts bounds the retry lifetime.
+  return true;
 }
 
 export function validateReceipt(
