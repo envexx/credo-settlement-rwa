@@ -76,6 +76,9 @@ test("canonical guide documents only implemented integration routes", async () =
     assert.match(guide, new RegExp(route.replaceAll("/", "\\/")));
   }
   assert.doesNotMatch(guide, /POST \/api\/v1\/sales(?:\s|`)/);
+  assert.match(guide, /## Thin TypeScript client/);
+  assert.match(guide, /CredoClient/);
+  assert.match(guide, /waitForSettlement/);
   assert.match(readme, /docs\/integration\/README\.md/);
   assert.match(infra, /Repository integration guide/);
 });

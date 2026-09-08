@@ -58,6 +58,29 @@ const hash = await walletClient.writeContract({
 
 Use the compiler-generated files in [`abis/`](abis/) for production code.
 
+## Thin TypeScript client
+
+For API-assisted integrations, [`sdk/client.ts`](../../sdk/client.ts) in this
+repository wraps the full buyer flow with zero dependencies:
+
+```ts
+import { CredoClient } from "./sdk/client";
+
+const credo = new CredoClient({ baseUrl: "https://credo.becoder.xyz" });
+await credo.login({ address, signMessage });
+
+const instruction = await credo.paymentInstruction(saleId);
+// transfer exact amountRaw of USDC to instruction.recipient on Sepolia
+await credo.registerPayment(saleId, txHash);
+
+const settled = await credo.waitForSettlement(saleId, {
+  onPoll: (snapshot) => console.log(snapshot.proof?.status),
+});
+```
+
+The client is intentionally in-repo (not published to npm) so it always matches
+the deployed API contract.
+
 ## Operational boundaries
 
 - Sepolia payment is irreversible before Creditcoin release completes; this is

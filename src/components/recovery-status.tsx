@@ -103,6 +103,10 @@ export function RecoveryStatus({ saleId }: { saleId: string }) {
               value={settlement.proof?.status ?? "Not started"}
             />
             <RecoveryFact
+              label="Proof query ID"
+              value={settlement.proof?.queryId ?? "Pending"}
+            />
+            <RecoveryFact
               label="Payment transaction"
               value={settlement.payment?.sourceTxHash ?? "Not submitted"}
             />
@@ -133,6 +137,17 @@ export function RecoveryStatus({ saleId }: { saleId: string }) {
               rel="noreferrer"
             >
               View settlement on Creditcoin CC3 <ExternalLink />
+            </a>
+          </Button>
+        ) : null}
+        {settlement?.proof?.queryId ? (
+          <Button asChild variant="outline">
+            <a
+              href={`https://creditcoin-testnet.blockscout.com/queryId/${settlement.proof.queryId}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              View proof on Attestcoin <ExternalLink />
             </a>
           </Button>
         ) : null}
