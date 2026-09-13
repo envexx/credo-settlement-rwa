@@ -30,17 +30,15 @@ export default function PlaygroundPage() {
           <div className="grid grid-cols-3 divide-x rounded-lg border bg-card p-4 text-center">
             <div>
               <strong className="block text-lg">1</strong>
-              <span className="text-[9px] text-muted-foreground">RWA UNIT</span>
+              <span className="text-xs text-muted-foreground">RWA UNIT</span>
             </div>
             <div>
               <strong className="block text-lg">1.00</strong>
-              <span className="text-[9px] text-muted-foreground">
-                TEST USDC
-              </span>
+              <span className="text-xs text-muted-foreground">TEST USDC</span>
             </div>
             <div>
               <strong className="block text-lg">8–10m</strong>
-              <span className="text-[9px] text-muted-foreground">
+              <span className="text-xs text-muted-foreground">
                 TYPICAL PROOF
               </span>
             </div>

@@ -24,6 +24,15 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { SettlementStatus } from "@/components/settlement-status";
 import { settlementPresentation } from "@/lib/settlement-presentation";
 
@@ -65,6 +74,18 @@ type PaymentInstruction = {
   amountRaw: string;
 };
 
+type DeepLinkState =
+  "idle" | "loading" | "not-found" | "inaccessible" | "unavailable" | "loaded";
+
+class ApiResponseError extends Error {
+  constructor(
+    readonly status: number,
+    message: string,
+  ) {
+    super(message);
+  }
+}
+
 const erc20Abi = parseAbi([
   "function balanceOf(address) view returns(uint256)",
   "function transfer(address,uint256) returns(bool)",
@@ -92,7 +113,8 @@ function apiMessage(data: unknown, fallback: string) {
 
 async function responseJson<T>(response: Response, fallback: string) {
   const data = (await response.json()) as T;
-  if (!response.ok) throw new Error(apiMessage(data, fallback));
+  if (!response.ok)
+    throw new ApiResponseError(response.status, apiMessage(data, fallback));
   return data;
 }
 
@@ -155,6 +177,8 @@ export function Playground() {
   const [balance, setBalance] = useState<bigint>();
   const [pending, setPending] = useState<"reserve" | "pay">();
   const [error, setError] = useState("");
+  const [authIntent, setAuthIntent] = useState<"reserve" | "pay">();
+  const [deepLinkState, setDeepLinkState] = useState<DeepLinkState>("idle");
 
   const saleId = sale?.saleId ?? settlement?.saleId;
   const copy = settlementPresentation({
@@ -163,21 +187,33 @@ export function Playground() {
   });
 
   useEffect(() => {
-    const id = new URLSearchParams(window.location.search).get("sale");
-    if (!id || !/^0x[a-fA-F0-9]{64}$/.test(id)) return;
     let cancelled = false;
-    void getSettlement(id)
-      .then((data) => {
-        if (!cancelled) setSettlement(data);
-      })
-      .catch((reason: unknown) => {
-        if (!cancelled)
-          setError(
-            reason instanceof Error
-              ? reason.message
-              : "Live settlement is unavailable",
-          );
-      });
+    void Promise.resolve().then(async () => {
+      const id = new URLSearchParams(window.location.search).get("sale");
+      if (!id) return;
+      if (!/^0x[a-fA-F0-9]{64}$/.test(id)) {
+        setDeepLinkState("not-found");
+        return;
+      }
+      setDeepLinkState("loading");
+      try {
+        const data = await getSettlement(id);
+        if (!cancelled) {
+          setSettlement(data);
+          setDeepLinkState("loaded");
+        }
+      } catch (reason) {
+        if (cancelled) return;
+        if (reason instanceof ApiResponseError && reason.status === 404)
+          setDeepLinkState("not-found");
+        else if (
+          reason instanceof ApiResponseError &&
+          (reason.status === 401 || reason.status === 403)
+        )
+          setDeepLinkState("inaccessible");
+        else setDeepLinkState("unavailable");
+      }
+    });
     return () => {
       cancelled = true;
     };
@@ -185,6 +221,7 @@ export function Playground() {
 
   useEffect(() => {
     if (
+      deepLinkState !== "loaded" ||
       !saleId ||
       settlement?.settlement ||
       settlement?.saleStatus === "RECLAIMED"
@@ -196,7 +233,7 @@ export function Playground() {
         .catch(() => undefined);
     }, 5_000);
     return () => window.clearInterval(interval);
-  }, [saleId, settlement?.saleStatus, settlement?.settlement]);
+  }, [deepLinkState, saleId, settlement?.saleStatus, settlement?.settlement]);
 
   async function authenticateWallet() {
     const ethereum = provider();
@@ -260,6 +297,7 @@ export function Playground() {
         "Could not reserve a live test RWA",
       );
       setSale(created);
+      setDeepLinkState("loaded");
       window.history.replaceState({}, "", `/playground?sale=${created.saleId}`);
       setSettlement(await getSettlement(created.saleId));
       await preflightPayment(ethereum, created.saleId, walletAddress);
@@ -289,6 +327,13 @@ export function Playground() {
     } finally {
       setPending(undefined);
     }
+  }
+
+  async function continueAuthentication() {
+    const intent = authIntent;
+    setAuthIntent(undefined);
+    if (intent === "reserve") await reserve();
+    if (intent === "pay") await connectToPay();
   }
 
   async function pay() {
@@ -350,6 +395,11 @@ export function Playground() {
     settlement?.saleStatus === "OPEN" &&
     !settlement.payment,
   );
+  const settlementBlocked =
+    deepLinkState === "loading" ||
+    deepLinkState === "not-found" ||
+    deepLinkState === "inaccessible" ||
+    deepLinkState === "unavailable";
 
   return (
     <Card className="overflow-hidden border bg-card shadow-[0_30px_100px_rgba(0,0,0,.08)]">
@@ -395,7 +445,26 @@ export function Playground() {
         <section className="rounded-xl border bg-secondary/20 p-5 sm:p-6">
           <p className="technical-label">CURRENT STATUS</p>
           <div className="mt-3">
-            <SettlementStatus copy={copy} />
+            {deepLinkState === "loading" ? (
+              <p className="text-sm text-muted-foreground">
+                Loading settlement…
+              </p>
+            ) : deepLinkState === "not-found" ? (
+              <p className="text-sm text-muted-foreground">
+                Settlement not found. Check the recovery link and try again.
+              </p>
+            ) : deepLinkState === "inaccessible" ? (
+              <p className="text-sm text-muted-foreground">
+                This settlement is unavailable to this wallet.
+              </p>
+            ) : deepLinkState === "unavailable" ? (
+              <p className="text-sm text-muted-foreground">
+                Settlement service is temporarily unavailable. Try the recovery
+                link again shortly.
+              </p>
+            ) : (
+              <SettlementStatus copy={copy} />
+            )}
           </div>
 
           {saleId ? (
@@ -422,11 +491,11 @@ export function Playground() {
           ) : null}
 
           <div className="mt-7 space-y-3">
-            {!saleId ? (
+            {deepLinkState === "idle" ? (
               <Button
                 className="min-h-11 w-full"
                 disabled={Boolean(pending)}
-                onClick={() => void reserve()}
+                onClick={() => setAuthIntent("reserve")}
               >
                 {pending === "reserve" ? (
                   <LoaderCircle className="animate-spin" />
@@ -435,13 +504,14 @@ export function Playground() {
                 )}
                 Connect & reserve live RWA
               </Button>
-            ) : !account &&
+            ) : !settlementBlocked &&
+              !account &&
               settlement?.saleStatus === "OPEN" &&
               !settlement.payment ? (
               <Button
                 className="min-h-11 w-full"
                 disabled={Boolean(pending)}
-                onClick={() => void connectToPay()}
+                onClick={() => setAuthIntent("pay")}
               >
                 {pending === "pay" ? (
                   <LoaderCircle className="animate-spin" />
@@ -463,7 +533,7 @@ export function Playground() {
                 )}
                 Pay 1.00 test USDC
               </Button>
-            ) : (
+            ) : !settlementBlocked ? (
               <div className="flex items-center gap-3 rounded-lg border bg-background/60 p-4 text-sm">
                 {settlement?.settlement ? (
                   <CheckCircle2 className="size-5 text-primary" />
@@ -476,7 +546,7 @@ export function Playground() {
                     : "Waiting for the next verified protocol state."}
                 </span>
               </div>
-            )}
+            ) : null}
             {insufficient ? (
               <p className="text-xs leading-5 text-destructive">
                 Insufficient Sepolia test USDC.{" "}
@@ -543,6 +613,29 @@ export function Playground() {
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       ) : null}
+      <Sheet
+        open={authIntent !== undefined}
+        onOpenChange={(open) => !open && setAuthIntent(undefined)}
+      >
+        <SheetContent side="bottom" className="mx-auto max-w-lg rounded-t-xl">
+          <SheetHeader>
+            <SheetTitle>Authenticate your wallet</SheetTitle>
+            <SheetDescription className="leading-6">
+              This signature only authenticates your wallet and creates a
+              session. It does not send a transaction or move assets. If you
+              cancel, no RWA is reserved and no payment is made.
+            </SheetDescription>
+          </SheetHeader>
+          <SheetFooter>
+            <SheetClose asChild>
+              <Button variant="outline">Cancel</Button>
+            </SheetClose>
+            <Button onClick={() => void continueAuthentication()}>
+              Continue to wallet signature
+            </Button>
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
     </Card>
   );
 }
@@ -551,9 +644,7 @@ function Metric({ label, value }: { label: string; value: string }) {
   return (
     <div>
       <strong className="block text-sm">{value}</strong>
-      <span className="mt-1 block text-[9px] text-muted-foreground">
-        {label}
-      </span>
+      <span className="mt-1 block text-xs text-muted-foreground">{label}</span>
     </div>
   );
 }
@@ -581,8 +672,8 @@ function Evidence({
   const content = (
     <>
       <Icon className="size-3.5 text-primary" />
-      <p className="mt-3 text-[9px] text-muted-foreground">{label}</p>
-      <p className="mt-1 truncate font-mono text-[9px]">{short(value)}</p>
+      <p className="mt-3 text-xs text-muted-foreground">{label}</p>
+      <p className="mt-1 truncate font-mono text-xs">{short(value)}</p>
     </>
   );
   return href ? (

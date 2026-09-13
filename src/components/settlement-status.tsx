@@ -1,14 +1,13 @@
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import type { SettlementPresentation } from "@/lib/settlement-presentation";
 
 export function SettlementStatus({ copy }: { copy: SettlementPresentation }) {
   return (
-    <Alert data-tone={copy.tone}>
-      <div aria-live="polite" aria-atomic="true">
-        <AlertTitle>{copy.title}</AlertTitle>
-        <AlertDescription>{copy.body}</AlertDescription>
-      </div>
+    <section data-tone={copy.tone} aria-labelledby="settlement-status-title">
+      <h3 id="settlement-status-title" className="font-medium">
+        {copy.title}
+      </h3>
+      <p className="mt-1 text-sm text-muted-foreground">{copy.body}</p>
       <p className="mt-3 text-xs font-medium">Next: {copy.nextAction}</p>
-    </Alert>
+    </section>
   );
 }

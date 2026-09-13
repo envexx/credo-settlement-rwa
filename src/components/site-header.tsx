@@ -1,9 +1,9 @@
 import Link from "next/link";
-import { ArrowUpRight, ChevronDown } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import NextImage from "next/image";
 import { MobileNav } from "@/components/mobile-nav";
-import { siteMenus } from "@/components/site-navigation";
+import { DesktopNav } from "@/components/desktop-nav";
 
 const logo = "/brands/LOGO.png";
 
@@ -30,48 +30,7 @@ export function SiteHeader() {
           </span>
           CREDO<span className="text-primary">.</span>
         </Link>
-        <nav
-          className="hidden items-center gap-1 rounded-full border bg-card/70 p-1 text-xs md:flex"
-          aria-label="Primary"
-        >
-          {siteMenus.map((menu) => (
-            <div key={menu.label} className="nav-menu group relative">
-              <button className="flex items-center gap-1 rounded-full px-4 py-2 text-muted-foreground outline-none hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-primary/60">
-                {menu.label}
-                <ChevronDown className="size-3 transition-transform group-hover:rotate-180 group-focus-within:rotate-180" />
-              </button>
-              <div className="nav-menu-panel absolute left-1/2 top-full w-72 -translate-x-1/2 pt-3">
-                <div className="rounded-lg border bg-popover p-2 shadow-2xl">
-                  {menu.items.map(([label, desc, href, Icon]) => (
-                    <Link
-                      key={String(label)}
-                      href={String(href)}
-                      className="flex gap-3 rounded-md p-3 hover:bg-muted"
-                    >
-                      <span className="grid size-8 shrink-0 place-items-center rounded-md border bg-background text-primary">
-                        <Icon className="size-4" />
-                      </span>
-                      <span>
-                        <strong className="block text-xs font-medium text-foreground">
-                          {String(label)}
-                        </strong>
-                        <small className="mt-1 block text-[10px] leading-4 text-muted-foreground">
-                          {String(desc)}
-                        </small>
-                      </span>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            </div>
-          ))}
-          <Link
-            className="rounded-full px-4 py-2 text-muted-foreground hover:bg-muted hover:text-foreground"
-            href="/infra"
-          >
-            Documentation
-          </Link>
-        </nav>
+        <DesktopNav />
         <div className="flex items-center gap-2">
           <MobileNav />
           <Button
@@ -147,6 +106,13 @@ export function SiteFooter() {
           >
             GitHub ↗
           </a>
+        </div>
+        <div>
+          <strong>Trust</strong>
+          <Link href="/trust">Trust center</Link>
+          <Link href="/privacy">Privacy</Link>
+          <Link href="/terms">Terms</Link>
+          <Link href="/status">System status</Link>
         </div>
       </div>
       <div className="container-shell site-footer-bottom">
